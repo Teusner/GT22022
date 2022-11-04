@@ -1,0 +1,184 @@
+\PassOptionsToPackage{dvipsnames}{xcolor}
+\documentclass{beamer}
+
+\usepackage[scale=2]{ccicons}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{gensymb}
+\usepackage{multimedia}
+\usepackage{hyperref}
+\usepackage{txfonts}
+
+% Beamer configuration
+\usetheme[sectionpage=progressbar, numbering=counter, progressbar=frametitle]{metropolis}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotsthemetol}
+
+% Progressbar
+\setbeamercolor{progress bar}{
+    fg=TolLightGreen,
+    bg=TolLightGreen!50!black!30
+}
+\makeatletter
+    \setlength{\metropolis@titleseparator@linewidth}{2pt}
+    \setlength{\metropolis@progressonsectionpage@linewidth}{2pt}
+    \setlength{\metropolis@progressinheadfoot@linewidth}{2pt}
+\makeatother
+
+% Footer
+\setbeamertemplate{frame footer}{Quentin Brateau, ENSTA Bretagne}
+
+% Block fill
+\metroset{block=fill}
+
+\title{Torpedo-like AUV control in constrained environment}
+\date{\today}
+\author{Quentin Brateau}
+\institute{ENSTA Bretagne}
+
+\titlegraphic{
+    \centering
+    \begin{tabular}{lllll}
+        \href{https://www.defense.gouv.fr/aid}{\includegraphics[height=0.6cm]{imgs/logo_aid}} &
+        \href{https://www.gdr-robotique.org/}{\includegraphics[height=0.6cm]{imgs/logo_gdr}} &
+        \href{https://www.ensta-bretagne.fr/fr/}{\includegraphics[height=0.6cm]{imgs/logo_ensta}} &
+        \href{https://labsticc.fr/fr}{\includegraphics[height=0.6cm]{imgs/logo_labsticc}} &
+        \href{https://www.ensta-bretagne.fr/robex/}{\includegraphics[height=0.6cm]{imgs/logo_robex}}
+    \end{tabular}
+}
+
+\addtobeamertemplate{frametitle}{}{%
+    \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north east,yshift=2pt] at (current page.north east) {\includegraphics[height=0.9cm]{imgs/logo_ensta_bw}};
+    \end{tikzpicture}
+}
+
+\begin{document}
+
+    \maketitle
+
+    \subsection{Introduction}
+
+        \begin{frame}{Introduction}
+        \end{frame}
+    
+    \section{Modeling}
+
+        \begin{frame}{Assumptions}
+            \begin{minipage}{0.45\textwidth}
+                \begin{block}{}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+
+        \begin{frame}{State Equation}
+            \centering
+            \begin{minipage}{0.7\textwidth}
+                \begin{block}{Inputs}
+                    \centering
+                    Input vector of the system is $\mathbf{u} = (u_0, u_1, u_2, u_3)^T$, where:
+                    \begin{itemize}
+                        \item $u_0$: thruster velocity \\
+                        \item $u_1, u_2, u_3$: fin angles
+                    \end{itemize}
+                \end{block}
+                \begin{block}{State Equation}
+                    \begin{eqnarray}
+                        \left\{
+                            \begin{array}{rcl}
+                                \dot{\mathbf{p}} & = & \mathbf{R} \cdot \mathbf{v_r} \\
+                                \dot{\mathbf{R}} & = & \mathbf{R} \cdot (\mathbf{\omega_r} \wedge) \\
+                                \dot{\mathbf{v_r}} & = & \mathbf{R}^T \cdot g(\mathbf{p}) + \mathbf{a_r} - \mathbf{\omega_r} \wedge \mathbf{v_r}
+                            \end{array}
+                        \right.
+                    \end{eqnarray}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+    \section{Control}
+
+        \begin{frame}{Control}
+            \centering
+            \begin{minipage}{0.7\textwidth}
+                \begin{block}{Control inputs}
+                    \centering
+                    Controlled physical quantites are linear acceleration $\mathbf{a_r}$ and angular velocity $\mathbf{\omega_r}$
+                \end{block}
+                \begin{block}{State Equation}
+                    \begin{eqnarray}
+                        \left\{
+                            \begin{array}{rcl}
+                                \dot{\mathbf{p}} & = & \mathbf{R} \cdot \mathbf{v_r} \\
+                                \dot{\mathbf{R}} & = & \mathbf{R} \cdot (\mathbf{\omega_r} \wedge) \\
+                                \dot{\mathbf{v_r}} & = & \mathbf{R}^T \cdot g(\mathbf{p}) + \mathbf{a_r} - \mathbf{\omega_r} \wedge \mathbf{v_r}
+                            \end{array}
+                        \right.
+                    \end{eqnarray}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{Control}
+            \centering
+            \begin{minipage}{0.7\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \draw [thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.25] (I) coordinate[pos=0.7] (R2);
+                        \coordinate (R1) at (0,1.2);
+                        \path[thick,ForestGreen,->,>=latex] (R1) edge[bend left] node[pos=0.65,right,ForestGreen] {$\omega_r$} (R2);
+                        \node[ForestGreen] at (R1) {$\bullet$} node[ForestGreen] at (R1) [above] {$\mathbf{R}_u$};
+                        \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R2) [below] {$\mathbf{R}_v$};
+                        \node[red] at (I) {$\bullet$} node[red] at (I) [below] {$\mathbf{I}$};
+                        \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                    \end{tikzpicture}
+                    \caption{$SO(3)$}
+                \end{figure}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{RotUV}
+            \centering
+            \begin{minipage}{0.3\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \coordinate (R1) at (0.5,1.2);
+                        \draw [thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.25] (I) coordinate[pos=0.35] (R2) coordinate[pos=0.7] (R3);
+                        \path[thick,ForestGreen,->,>=latex] (R1) edge[bend left=20] node[pos=0.65,right,ForestGreen] {$\omega_r$} (R3);
+                        \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1);
+                        \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above] {$v$} (R2);
+                        \node[ForestGreen] at (R1) {$\bullet$} node[ForestGreen] at (R1) [above] {$\mathbf{R}_u$};
+                        \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R3) [below] {$\mathbf{R}_u^v \cdot \mathbf{R}_u$};
+                        \node[red] at (I) {$\bullet$} node[red] at (I) [below] {$I$};
+                        \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R2) [below] {$\mathbf{R}_v$};
+                        \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                    \end{tikzpicture}
+                    \caption{$SO(3)$}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{block}{Vector to vector formulation}
+                    \begin{equation}
+                        \begin{array}{rcl}
+                            \mathbf{K}_u^v & = & vu^T - uv^T \\
+                            \mathbf{R}_u^v & = & \mathbf{I} + \mathbf{K}_u^v + \frac{1}{1 + \langle u, v\rangle} (\mathbf{K}_u^v)^2
+                        \end{array}
+                    \end{equation}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+    \appendix
+
+    \begin{frame}[standout]
+        Questions?
+    \end{frame}
+    
+\end{document}
