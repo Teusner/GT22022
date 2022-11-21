@@ -42,8 +42,8 @@ manim: $(addprefix $(PRESENTATION_BUILD_DIR)/, ${MANIM_ANIMATIONS})
 
 $(PRESENTATION_BUILD_DIR)/%.mp4 : scripts/%.py
 	$(dir_guard)
-	manim -ql -r 1000,1000 $< $*
-	cp -f build/manim/videos/$*/1000p15/$*.mp4 $@
+	manim -qh -r 1000,1000 $< $*
+	cp -f build/manim/videos/$*/1000p60/$*.mp4 $@
 
 # Clean recipe
 clean:

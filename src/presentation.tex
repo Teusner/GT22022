@@ -8,6 +8,8 @@
 \usepackage{multimedia}
 \usepackage{hyperref}
 \usepackage{txfonts}
+\usepackage{caption}
+\usepackage{subcaption}
 
 % Beamer configuration
 \usetheme[sectionpage=progressbar, numbering=counter, progressbar=frametitle]{metropolis}
@@ -57,6 +59,47 @@
 \begin{document}
 
     \maketitle
+
+    \begin{frame}
+        \begin{figure}
+            \centering
+            \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth]{example-image-a}}
+            \caption{Time delayed measurement on a system}
+            \label{fig:y equals x}
+        \end{figure}
+    \end{frame}
+    
+    \begin{frame}
+        \begin{figure}
+            \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{example-image-a}}
+                \caption{Time delayed measurement on a system}
+                \label{fig:y equals x}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{example-image-b}}
+                \caption{Time delayed measurement on a system}
+                \label{fig:y equals x}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{example-image-c}}
+                \caption{Time delayed measurement on a system}
+                \label{fig:y equals x}
+            \end{subfigure}
+            \hfill
+            \begin{subfigure}[b]{0.24\textwidth}
+                \centering
+                \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{example-image-a}}
+                \caption{Time delayed measurement on a system}
+                \label{fig:y equals x}
+            \end{subfigure}
+        \end{figure}
+    \end{frame}
 
     \section{Introduction}
 
@@ -269,6 +312,8 @@
                 \end{block}
             \end{minipage}
         \end{frame}
+
+       
 
     \appendix
 
