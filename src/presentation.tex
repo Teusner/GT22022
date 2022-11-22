@@ -1,5 +1,5 @@
 \PassOptionsToPackage{dvipsnames}{xcolor}
-\documentclass{beamer}
+\documentclass[10pt, xcolor={usenames, dvipsnames}]{beamer}
 
 \usepackage[scale=2]{ccicons}
 \usepackage{graphicx}
@@ -16,6 +16,7 @@
 
 \usepackage{pgfplots}
 \usepackage{pgfplotsthemetol}
+\usepackage{tikz}
 
 % Progressbar
 \setbeamercolor{progress bar}{
@@ -60,55 +61,48 @@
 
     \maketitle
 
-    \begin{frame}
-        \begin{figure}
-            \centering
-            \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth]{example-image-a}}
-            \caption{Time delayed measurement on a system}
-            \label{fig:y equals x}
-        \end{figure}
-    \end{frame}
-    
-    \begin{frame}
-        \begin{figure}
-            \begin{subfigure}[b]{0.24\textwidth}
-                \centering
-                \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{example-image-a}}
-                \caption{Time delayed measurement on a system}
-                \label{fig:y equals x}
-            \end{subfigure}
-            \hfill
-            \begin{subfigure}[b]{0.24\textwidth}
-                \centering
-                \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{example-image-b}}
-                \caption{Time delayed measurement on a system}
-                \label{fig:y equals x}
-            \end{subfigure}
-            \hfill
-            \begin{subfigure}[b]{0.24\textwidth}
-                \centering
-                \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{example-image-c}}
-                \caption{Time delayed measurement on a system}
-                \label{fig:y equals x}
-            \end{subfigure}
-            \hfill
-            \begin{subfigure}[b]{0.24\textwidth}
-                \centering
-                \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{example-image-a}}
-                \caption{Time delayed measurement on a system}
-                \label{fig:y equals x}
-            \end{subfigure}
-        \end{figure}
-    \end{frame}
+    % \begin{frame}{Table of contents}
+    %     \setbeamertemplate{section in toc}[sections numbered]
+    %     \tableofcontents[hideallsubsections]
+    % \end{frame}
 
-    \section{Introduction}
+    \section{Context}
+
+        \begin{frame}{Introduction}{PhD}
+            \centering
+            \begin{minipage}[c]{0.58\textwidth}
+                \begin{block}{Research laboratory}
+                    \vspace{0.2cm}
+                    \begin{itemize}
+                        \item ENSTA Bretagne, UMR 6285, Lab-STICC
+                    \end{itemize}
+                \end{block}
+
+                \begin{block}{Supervisiors}
+                    \begin{itemize}
+                        \item Luc Jaulin
+                        \item Fabrice Lebars
+                    \end{itemize}
+                \end{block}
+
+                \begin{block}{Funding}
+                    \begin{itemize}
+                        \item AID funding: Jean-Daniel Masson
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+            \hfill
+            \begin{minipage}[c]{0.4\textwidth}
+                \includegraphics[height=0.7\textheight, trim={24cm 0 16cm 0}, clip]{imgs/ensta.jpg}
+            \end{minipage}
+        \end{frame}
 
         \begin{frame}{Introduction}
-            \begin{minipage}{0.45\textwidth}
+            \begin{minipage}[c]{0.55\textwidth}
                 \begin{block}{AUV}
                     \vspace{0.25cm}
                     \begin{itemize}
-                        \item Riptide's micro-uuv \\ 
+                        \item Control of torpedo-like AUV \\ 
                         \item Riptide's micro-uuv
                     \end{itemize}
                 \end{block}
@@ -118,123 +112,346 @@
                         \item Pool, harbor, ...
                     \end{itemize}
                 \end{block}
+                \begin{block}{Goals}
+                    \begin{itemize}
+                        \item Reactivity \\
+                        \item Manoeuvrability
+                    \end{itemize}
+                \end{block}
             \end{minipage}
             \hfill
+            \begin{minipage}[c]{0.4\textwidth}
+                \includegraphics[height=\textwidth, angle=90, origin=c, trim={3cm 0 10cm 0}, clip]{imgs/harbour.jpg}
+                \includegraphics[height=\textwidth, angle=90, origin=c]{imgs/harbour.jpg}
+                \vspace{-1cm}
+            \end{minipage}
+        \end{frame}
+
+    \section{Motivation}
+
+        \begin{frame}{Obstacle avoidance}
+            \begin{minipage}{0.55\textwidth}
+                \begin{block}{Wall avoidance}
+                    \vspace{0.2cm}
+                    \begin{itemize}
+                        \item Sense wall \\
+                        \item Determine normal vector $\mathbf{u}$ \\
+                        \item Reorient AUV orthogonal to $\mathbf{u}$
+                    \end{itemize}
+                \end{block}
+                \begin{block}{Control law}
+                    \begin{itemize}
+                        \item Without singularities \\
+                        \item Based on reliable sensors \\
+                        \item Independant of orientation \\
+                        \item As fast as possible
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{Classical control}
+            \centering
             \begin{minipage}{0.45\textwidth}
-                
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \onslide<2->{
+                            \coordinate (R1) at (0.8,1.3);
+                            \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1); 
+                        }
+                        \onslide<3->{
+                            \coordinate (R2) at (-0.2,1.15);
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$v$} (R2); 
+                        }
+                        \onslide<4->{
+                            \begin{scope}[rotate around={-30:(0,0)}]
+                                \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.2] (R3);
+                                \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                            \end{scope}
+                            \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,above] {$u_\bot$} (R3);
+                            }
+                        \onslide<5-> {
+                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=60,out=160] (R3);
+                        }
+                    \end{tikzpicture}
+                    \caption{Representation in $S^2$}
+                \end{figure}
+            \end{minipage}
+            \begin{minipage}{0.45\textwidth}
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \onslide<2->{
+                            \coordinate (R1) at (0.8,1.3);
+                            \node[red] at (R1) {$\bullet$} node[red] at (R1) [below right] {$\mathbf{R}_u$};
+                        }
+                        \onslide<3->{
+                            \coordinate (R2) at (-0.2,1.15);
+                            \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R2) [above] {$\mathbf{R}_v$};
+                        }
+                        \onslide<4->{
+                            \begin{scope}[rotate around={-30:(0,0)}]
+                                \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.2] (R3);
+                                \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                            \end{scope}
+                            \node[thick,RoyalBlue] at (R3) {$\bullet$} node[RoyalBlue] at (R3) [below] {$\mathbf{R}_{u_\bot}$};
+                        }
+                        \onslide<5->{
+                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=60,out=160] node[midway,below] {$R_w$} (R3);
+                        }
+                    \end{tikzpicture}
+                    \caption{Representation in $SO(3)$}
+                \end{figure}
             \end{minipage}
         \end{frame}
 
-        \begin{frame}{Table of contents}
-            \setbeamertemplate{section in toc}[sections numbered]
-            \tableofcontents[hideallsubsections]
-          \end{frame}
-    
-    \section{Modeling}
-
-        \begin{frame}{Torpedo model}
+        \begin{frame}{Classical control}
             \centering
-            \begin{minipage}{0.7\textwidth}
-                \begin{block}{Torpedo assumptions}
-                    The following statements are equivalent
+            \begin{minipage}{0.6\textwidth}
+                \begin{block}{Strengths}
+                    \vspace{0.2cm}
                     \begin{itemize}
-                        \item No side slip effect \\
-                        \item No lateral speed
-                        \item Velocity along the $\mathnormal{x}$ axis \\
+                        \item Often already implemented for other purposes
+                        \item AUV orientation fully controlled
                     \end{itemize}
                 \end{block}
-                \begin{block}{Torpedo velocity}
+                \begin{block}{Weaknesses}
+                    \begin{itemize}
+                        \item AUV angles have to be known
+                        \item Not the quickest reorientation
+                        \item Set all angles
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{Proposed approach}
+            \centering
+            \begin{minipage}{0.45\textwidth}
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \onslide<2->{
+                            \coordinate (R1) at (0.8,1.3);
+                            \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1); 
+                        }
+                        \onslide<3->{
+                            \coordinate (R2) at (-0.2,1.15);
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$v$} (R2); 
+                        }
+                        \onslide<4->{
+                            \begin{scope}[rotate around={-30:(0,0)}]
+                                \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.36] (R3) coordinate[pos=0.61] (R4);
+                                \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                            \end{scope}
+                            \draw[thick,dotted] (R1) edge[in=30,out=175] (R2);
+                            \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,above] {$v_\bot$} (R3);
+                        }
+                        \onslide<4>{
+                            \draw[thick,dotted] (R2) edge[in=70,out=210] (R3);
+                        }
+                        \onslide<5->{
+                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
+                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$w$} (R4);
+                        }
+                    \end{tikzpicture}
+                    \caption{Representation in $S^2$}
+                \end{figure}
+            \end{minipage}
+            \begin{minipage}{0.45\textwidth}
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \onslide<2->{
+                            \coordinate (R1) at (0.8,1.3);
+                            \node[red] at (R1) {$\bullet$} node[red] at (R1) [below right] {$\mathbf{R}_u$};
+                        }
+                        \onslide<3->{
+                            \coordinate (R2) at (-0.2,1.15);
+                            \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R2) [above left] {$\mathbf{R}_v$};
+                        }
+                        \onslide<4->{
+                            \begin{scope}[rotate around={-30:(0,0)}]
+                                \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.36] (R3);
+                                \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                            \end{scope}
+                            \node[thick,RoyalBlue] at (R3) {$\bullet$} node[RoyalBlue] at (R3) [below left] {$\mathbf{R}_{v_\bot}$};
+                        }
+                        \onslide<5->{
+                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] node[midway, left] {$R_w$} (R3);
+                        }
+                    \end{tikzpicture}
+                    \caption{Representation in $SO(3)$}
+                \end{figure}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{Proposed approach}
+            \centering
+            \begin{minipage}{0.6\textwidth}
+                \begin{block}{Strengths}
+                    \vspace{0.2cm}
+                    \begin{itemize}
+                        \item Set only necessary angles
+                        \item Other angles don't need to be known
+                        \item Quickest reorientation
+                    \end{itemize}
+                \end{block}
+                \begin{block}{Weaknesses}
+                    \begin{itemize}
+                        \item Chosen direction not controlled
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+    \section{Orthogonal control}
+
+        \begin{frame}{Orthogonal control}
+            \begin{minipage}{0.4\textwidth}
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \coordinate (R1) at (0.8,1.3);
+                        \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1);
+                        \begin{scope}[rotate around={-30:(0,0)}]
+                            \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.36] (R3) coordinate[pos=0.61] (R4);
+                            \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                        \end{scope}
+                        
+                        \onslide<1>{
+                            \coordinate (R2) at (-0.2,1.15);
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$v$} (R2); 
+                            \draw[thick,dotted] (R1) edge[in=30,out=175] (R2);
+                            \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,above] {$v_\bot$} (R3);
+                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
+                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$w$} (R4);
+                        }
+                        \onslide<2>{
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,below right] {$v$} (R1);
+                        }
+                    \end{tikzpicture}
+                    \caption{Representation in $S^2$}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{block}{Determine w}
                     \begin{equation}
-                        \mathbf{v_r} = (v_r, 0, 0)^T
+                        \begin{split}
+                            \mathbf{w} &= \mathbf{u} \wedge \mathbf{v} \\
+                            \alpha &= arcsin(\mathbf{w}) \\
+                            R_w &= exp\left(\alpha\frac{\mathbf{w}}{||\mathbf{w}||}\right)
+                        \end{split}
                     \end{equation}
                 \end{block}
-            \end{minipage}
-        \end{frame}
-
-        \begin{frame}{State Equation}
-            \centering
-            \begin{minipage}{0.7\textwidth}
-                \begin{block}{AUV state}
-                    The state of the AUV is denoted by $\mathbf{X} = (\mathbf{p}, \mathbf{v_r}, \mathbf{R})$, where:
-                    \begin{itemize}
-                        \item $\mathbf{p}$ is the position of the AUV \\
-                        \item $\mathbf{v_r}$ is the velocity of the AUV in its frame \\
-                        \item $\mathbf{R}$ is the rotation matrix between the world and the AUV \\
-                    \end{itemize}
-                \end{block}
-                \begin{block}{State Equation}
-                    \begin{eqnarray}
-                        \left\{
-                            \begin{array}{rcl}
-                                \dot{\mathbf{p}} & = & \mathbf{R} \cdot \mathbf{v_r} \\
-                                \dot{\mathbf{R}} & = & \mathbf{R} \cdot (\mathbf{\omega_r} \wedge) \\
-                                \dot{\mathbf{v_r}} & = & \mathbf{R}^T \cdot g(\mathbf{p}) + \mathbf{a_r}
-                            \end{array}
-                        \right.
-                    \end{eqnarray}
-                \end{block}
-            \end{minipage}
-        \end{frame}
-
-        \begin{frame}{Inputs}
-            \centering
-            \begin{minipage}{0.7\textwidth}
-                \begin{block}{Inputs}
+                \begin{block}<2->{Issue}
                     \centering
-                    Input vector of the system is $\mathbf{u} = (u_0, u_1, u_2, u_3)^T$, where:
-                    \begin{itemize}
-                        \item $u_0$: thruster velocity \\
-                        \item $u_1, u_2, u_3$: fin angles
-                    \end{itemize}
+                    What if $\mathbf{u} = \mathbf{v}$ ?
                 \end{block}
             \end{minipage}
         \end{frame}
 
-        \begin{frame}{Linear acceleration}
-            \centering
-            \begin{minipage}{0.7\textwidth}
-                \begin{block}{Assumptions}
-                    \vspace{0.2cm}
-                    \begin{itemize}
-                        \item Quadratic thrust with velocity
-                        \item Quadratic drag with velocity
-                    \end{itemize}
-                \end{block}
-                \begin{block}{Linear acceleration}
+        \begin{frame}{Vector to vector formulation}
+            \begin{minipage}{0.4\textwidth}
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \coordinate (R1) at (0.8,1.3);
+                        \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1);
+                        \begin{scope}[rotate around={-30:(0,0)}]
+                            \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.2] (R3) coordinate[pos=0.36] (R4);
+                            \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                        \end{scope}
+                        \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,left,yshift=0.4cm] {$u_\bot$} (R3);
+                        \onslide<2->{
+                            \coordinate (R2) at (-0.2,1.15);
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$v$} (R2); 
+                        }
+                        \onslide<3->{
+                            \draw[thick,dotted,RoyalBlue,->,>=latex] (0,0) -- node[midway,below right] {$v_\bot$} (R4);
+                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R4);
+                            \coordinate (R5) at (0.4,-0.5);
+                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above right] {$w$} (R5);
+                        }
+                    \end{tikzpicture}
+                    \caption{Representation in $S^2$}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{block}<2->{Vector to vector formulation}
                     \begin{equation}
-                        \mathbf{a_r} = \underbrace{p_1 \cdot \left(\begin{smallmatrix}u_0 \\ 0 \\ 0 \end{smallmatrix}\right)^2}_{thrust} - \underbrace{p_2 \cdot \mathbf{v_r} \cdot |\mathbf{v_r}|}_{drag}
+                        \begin{array}{rcl}
+                            \mathbf{K}_v^{u_\bot} & = & u_\bot v^T - vu_\bot^T \\
+                            \mathbf{R}_v^{u_\bot} & = & \mathbf{I} + \mathbf{K}_v^{u_\bot} + \frac{1}{1 + \langle v, u_\bot\rangle} (\mathbf{K}_v^{u_\bot})^2 \\
+                        \end{array}
+                    \end{equation}
+                \end{block}
+                \begin{block}<3->{Angular velocity w}
+                    \begin{equation}
+                        \mathbf{w} = \wedge^{-1}(log(\mathbf{R}_v^{u_\bot}))
                     \end{equation}
                 \end{block}
             \end{minipage}
+        \end{frame}
+    
+    \section{Application}
+
+        \begin{frame}{2D example}
+            
         \end{frame}
 
-        \begin{frame}{Angular velocity}
-            \centering
-            \begin{minipage}{0.8\textwidth}
-                \begin{block}{Assumptions}
-                    \vspace{0.2cm}
-                    \begin{itemize}
-                        \item Fin's drag negligible compared to the AUV drag
-                        \item Fin's lift used to control the AUV
-                        \item Direct response between the fin's angle and the angular velocity
-                    \end{itemize}
-                \end{block}
-                \begin{block}{Angular velocity}
-                    \begin{equation}
-                        \mathbf{\omega_r} = v_r^{\color{red}{2}} \cdot 
-                            \underbrace{
-                                \left(
-                                \begin{smallmatrix}
-                                    -p_3 & -p_3 & -p_3 \\
-                                    0 & p_4 \cdot sin(\frac{2\pi}{3}) & -p_4 \cdot sin(\frac{2\pi}{3}) \\
-                                    p_4 & p_4 \cdot cos(\frac{2\pi}{3}) & p_4 \cdot cos(\frac{2\pi}{3})
-                                \end{smallmatrix}
-                                \right)
-                            }_{\mathbf{B}(p_3, p_4)} \cdot \left(\begin{smallmatrix}u_1\\ u_2\\ u_3\end{smallmatrix}\right)
-                    \end{equation}
-                \end{block}
-            \end{minipage}
+    \section{Orthogonal constraint}
+    
+        \begin{frame}{Summary of orthogonal constraints}
+            \begin{figure}
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_0_constraints}}
+                    \caption{No constraints}
+                    \label{fig:constraints_0}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_1_constraints}}
+                    \caption{1 constraint $(i_0 \bot k_1)$}
+                    \label{fig:constraints_1}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_2_constraints}}
+                    \caption{2 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$}
+                    \label{fig:constraints_2}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_3_constraints}}
+                    \caption{3 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$, $(j_0 \bot i_1)$}
+                    \label{fig:constraints_3}
+                \end{subfigure}
+                \caption{All combinations of orthogonal constraints in 3 dimensions}
+            \end{figure}
         \end{frame}
+
+
+
 
     \section{Control}
 
@@ -319,6 +536,110 @@
 
     \begin{frame}[standout]
         Questions?
+    \end{frame}
+
+    \begin{frame}{Torpedo model}
+        \centering
+        \begin{minipage}{0.7\textwidth}
+            \begin{block}{Torpedo assumptions}
+                The following statements are equivalent
+                \begin{itemize}
+                    \item No side slip effect \\
+                    \item No lateral speed
+                    \item Velocity along the $\mathnormal{x}$ axis \\
+                \end{itemize}
+            \end{block}
+            \begin{block}{Torpedo velocity}
+                \begin{equation}
+                    \mathbf{v_r} = (v_r, 0, 0)^T
+                \end{equation}
+            \end{block}
+        \end{minipage}
+    \end{frame}
+
+    \begin{frame}{State Equation}
+        \centering
+        \begin{minipage}{0.7\textwidth}
+            \begin{block}{AUV state}
+                The state of the AUV is denoted by $\mathbf{X} = (\mathbf{p}, \mathbf{v_r}, \mathbf{R})$, where:
+                \begin{itemize}
+                    \item $\mathbf{p}$ is the position of the AUV \\
+                    \item $\mathbf{v_r}$ is the velocity of the AUV in its frame \\
+                    \item $\mathbf{R}$ is the rotation matrix between the world and the AUV \\
+                \end{itemize}
+            \end{block}
+            \begin{block}{State Equation}
+                \begin{eqnarray}
+                    \left\{
+                        \begin{array}{rcl}
+                            \dot{\mathbf{p}} & = & \mathbf{R} \cdot \mathbf{v_r} \\
+                            \dot{\mathbf{R}} & = & \mathbf{R} \cdot (\mathbf{\omega_r} \wedge) \\
+                            \dot{\mathbf{v_r}} & = & \mathbf{R}^T \cdot g(\mathbf{p}) + \mathbf{a_r}
+                        \end{array}
+                    \right.
+                \end{eqnarray}
+            \end{block}
+        \end{minipage}
+    \end{frame}
+
+    \begin{frame}{Inputs}
+        \centering
+        \begin{minipage}{0.7\textwidth}
+            \begin{block}{Inputs}
+                \centering
+                Input vector of the system is $\mathbf{u} = (u_0, u_1, u_2, u_3)^T$, where:
+                \begin{itemize}
+                    \item $u_0$: thruster velocity \\
+                    \item $u_1, u_2, u_3$: fin angles
+                \end{itemize}
+            \end{block}
+        \end{minipage}
+    \end{frame}
+
+    \begin{frame}{Linear acceleration}
+        \centering
+        \begin{minipage}{0.7\textwidth}
+            \begin{block}{Assumptions}
+                \vspace{0.2cm}
+                \begin{itemize}
+                    \item Quadratic thrust with velocity
+                    \item Quadratic drag with velocity
+                \end{itemize}
+            \end{block}
+            \begin{block}{Linear acceleration}
+                \begin{equation}
+                    \mathbf{a_r} = \underbrace{p_1 \cdot \left(\begin{smallmatrix}u_0 \\ 0 \\ 0 \end{smallmatrix}\right)^2}_{thrust} - \underbrace{p_2 \cdot \mathbf{v_r} \cdot |\mathbf{v_r}|}_{drag}
+                \end{equation}
+            \end{block}
+        \end{minipage}
+    \end{frame}
+
+    \begin{frame}{Angular velocity}
+        \centering
+        \begin{minipage}{0.8\textwidth}
+            \begin{block}{Assumptions}
+                \vspace{0.2cm}
+                \begin{itemize}
+                    \item Fin's drag negligible compared to the AUV drag
+                    \item Fin's lift used to control the AUV
+                    \item Direct response between the fin's angle and the angular velocity
+                \end{itemize}
+            \end{block}
+            \begin{block}{Angular velocity}
+                \begin{equation}
+                    \mathbf{\omega_r} = v_r^{\color{red}{2}} \cdot 
+                        \underbrace{
+                            \left(
+                            \begin{smallmatrix}
+                                -p_3 & -p_3 & -p_3 \\
+                                0 & p_4 \cdot sin(\frac{2\pi}{3}) & -p_4 \cdot sin(\frac{2\pi}{3}) \\
+                                p_4 & p_4 \cdot cos(\frac{2\pi}{3}) & p_4 \cdot cos(\frac{2\pi}{3})
+                            \end{smallmatrix}
+                            \right)
+                        }_{\mathbf{B}(p_3, p_4)} \cdot \left(\begin{smallmatrix}u_1\\ u_2\\ u_3\end{smallmatrix}\right)
+                \end{equation}
+            \end{block}
+        \end{minipage}
     \end{frame}
 
     \begin{frame}{Repartition matrix}
