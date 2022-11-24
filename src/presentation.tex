@@ -17,6 +17,7 @@
 \usepackage{pgfplots}
 \usepackage{pgfplotsthemetol}
 \usepackage{tikz}
+\usetikzlibrary{positioning,arrows,decorations.pathmorphing}
 
 % Progressbar
 \setbeamercolor{progress bar}{
@@ -407,6 +408,39 @@
                     \end{equation}
                 \end{block}
             \end{minipage}
+        \end{frame}
+
+        \begin{frame}{Controller implementation}
+            \centering
+            \begin{minipage}{0.8\textwidth}
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}[
+                        input/.style={->,>=latex,thick,decorate,
+                        decoration={snake,amplitude=.4mm,segment length=2mm,post length=2mm}},
+                        block/.style={draw,fill=white,font=\small,thick,
+                            minimum width={2cm},minimum height={1.5cm}}]
+
+                        \node[block,circle,align=center] (n1) {Orthogonal\\controller};
+                        \node[block,circle,right=of n1] (n2) {Controller};
+                        \node[block,rectangle,right=of n2] (n3) {AUV};
+
+                        \draw[thick,->,>=latex,RoyalBlue] (n1) to node[midway,above] {$w$} (n2);
+                        
+                        \foreach \i/\a/\s in {0/37.5/-2.4,1/12.5/-3,2/-12.5/-3,3/-37.5/-2.5} {
+                            \draw[thick,->,>=latex,ForestGreen] (n2.\a) to node[near end,xshift=\s*1mm,yshift=1.5mm] {$u_\i$} ([yshift=0.6cm -\i * 0.4 cm]n3.west);
+                        }
+                        
+                        % inputs
+                        \coordinate[above=of n1.100] (u);
+                        \coordinate[above=of n1.80] (v);
+                        \draw[input,red] (u) -- node[midway,left,red] {$u$} (n1.100);
+                        \draw[input,ForestGreen] (v) -- node[midway,right,ForestGreen] {$v$} (n1.80);
+                    \end{tikzpicture}
+                    \caption{Block diagram}
+                \end{figure}
+            \end{minipage}
+            \hfill
         \end{frame}
     
     \section{Application}
