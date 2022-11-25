@@ -17,7 +17,7 @@
 \usepackage{pgfplots}
 \usepackage{pgfplotsthemetol}
 \usepackage{tikz}
-\usetikzlibrary{positioning,arrows,decorations.pathmorphing}
+\usetikzlibrary{positioning,arrows,decorations.pathmorphing,calc}
 
 % Progressbar
 \setbeamercolor{progress bar}{
@@ -99,7 +99,7 @@
         \end{frame}
 
         \begin{frame}{Introduction}
-            \begin{minipage}[c]{0.55\textwidth}
+            \begin{minipage}[t]{0.55\textwidth}
                 \begin{block}{AUV}
                     \vspace{0.25cm}
                     \begin{itemize}
@@ -121,17 +121,22 @@
                 \end{block}
             \end{minipage}
             \hfill
-            \begin{minipage}[c]{0.4\textwidth}
-                \includegraphics[height=\textwidth, angle=90, origin=c, trim={3cm 0 10cm 0}, clip]{imgs/harbour.jpg}
-                \includegraphics[height=\textwidth, angle=90, origin=c]{imgs/harbour.jpg}
-                \vspace{-1cm}
+            \begin{minipage}[t]{0.4\textwidth}
+                \begin{figure}[htb]
+                    \includegraphics[width=\textwidth]{imgs/harbour.png}
+
+                    \vspace{.1cm}
+
+                    \includegraphics[width=\textwidth]{imgs/riptide.png}
+                    \caption{Harbor and Riptide in the ENSTA Bretagne pool}
+                \end{figure}
             \end{minipage}
         \end{frame}
 
     \section{Motivation}
 
         \begin{frame}{Obstacle avoidance}
-            \begin{minipage}{0.55\textwidth}
+            \begin{minipage}[b]{0.5\textwidth}
                 \begin{block}{Wall avoidance}
                     \vspace{0.2cm}
                     \begin{itemize}
@@ -149,6 +154,14 @@
                     \end{itemize}
                 \end{block}
             \end{minipage}
+            \hfill
+            \begin{minipage}[b]{0.46\textwidth}
+                \begin{figure}
+                    \centering
+                    \includegraphics[width=0.95\textwidth]{imgs/vodelee.png}
+                    \caption{Vodelée Career - Belgium}
+                \end{figure}
+            \end{minipage}
         \end{frame}
 
         \begin{frame}{Classical control}
@@ -161,11 +174,11 @@
                         \draw[thick] (0,0) circle (2cm);
                         \onslide<2->{
                             \coordinate (R1) at (0.8,1.3);
-                            \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1); 
+                            \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1); 
                         }
                         \onslide<3->{
                             \coordinate (R2) at (-0.2,1.15);
-                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$v$} (R2); 
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{v}$} (R2); 
                         }
                         \onslide<4->{
                             \begin{scope}[rotate around={-30:(0,0)}]
@@ -176,6 +189,8 @@
                             }
                         \onslide<5-> {
                             \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=60,out=160] (R3);
+                            \coordinate[below right=1.2mm and 1.2mm of R3] (R4);
+                            % \draw[thick,->,>=latex,RoyalPurple] (R4) arc (-45:-225:2mm);
                         }
                     \end{tikzpicture}
                     \caption{Representation in $S^2$}
@@ -213,7 +228,7 @@
 
         \begin{frame}{Classical control}
             \centering
-            \begin{minipage}{0.6\textwidth}
+            \begin{minipage}{0.75\textwidth}
                 \begin{block}{Strengths}
                     \vspace{0.2cm}
                     \begin{itemize}
@@ -241,11 +256,11 @@
                         \draw[thick] (0,0) circle (2cm);
                         \onslide<2->{
                             \coordinate (R1) at (0.8,1.3);
-                            \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1); 
+                            \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1); 
                         }
                         \onslide<3->{
                             \coordinate (R2) at (-0.2,1.15);
-                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$v$} (R2); 
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{v}$} (R2); 
                         }
                         \onslide<4->{
                             \begin{scope}[rotate around={-30:(0,0)}]
@@ -253,14 +268,14 @@
                                 \draw[dashed] (2,0) arc (0:180:2 and 0.6);
                             \end{scope}
                             \draw[thick,dotted] (R1) edge[in=30,out=175] (R2);
-                            \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,above] {$v_\bot$} (R3);
+                            \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,above] {$\mathbf{v_\bot}$} (R3);
                         }
                         \onslide<4>{
                             \draw[thick,dotted] (R2) edge[in=70,out=210] (R3);
                         }
                         \onslide<5->{
                             \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
-                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$w$} (R4);
+                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{w}$} (R4);
                         }
                     \end{tikzpicture}
                     \caption{Representation in $S^2$}
@@ -298,7 +313,7 @@
 
         \begin{frame}{Proposed approach}
             \centering
-            \begin{minipage}{0.6\textwidth}
+            \begin{minipage}{0.75\textwidth}
                 \begin{block}{Strengths}
                     \vspace{0.2cm}
                     \begin{itemize}
@@ -317,7 +332,7 @@
 
     \section{Orthogonal control}
 
-        \begin{frame}{Orthogonal control}
+        \begin{frame}{Determine $\mathbf{v_\bot}$}
             \begin{minipage}{0.4\textwidth}
                 \centering
                 \begin{figure}
@@ -325,7 +340,52 @@
                         \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
                         \draw[thick] (0,0) circle (2cm);
                         \coordinate (R1) at (0.8,1.3);
-                        \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1);
+                        \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1);
+                        \begin{scope}[rotate around={-30:(0,0)}]
+                            \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.36] (R3);
+                            \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                        \end{scope}
+                        \coordinate (R2) at (-0.2,1.15);
+                        
+                        \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,left]  {$\mathbf{v}$} (R2);
+                        \onslide<2> {
+                            \coordinate (vu) at ($(0,0)!0.78!(R1)$);
+                            \draw[thick,dotted] (vu) -- (R2);
+                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\langle \mathbf{u}, \mathbf{v}\rangle \cdot \mathbf{u}$} (vu);
+                        }
+                        \onslide<3> {
+                            \coordinate (vv) at ($(0,0)!0.72!(R3)$);
+                            \draw[thick,RoyalPurple,->,>=latex] (vv) -- node[midway,left] {$\langle \mathbf{u}, \mathbf{v}\rangle \cdot \mathbf{u}$} (R2);
+                            \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,below right] {$\mathbf{v} - \langle \mathbf{u}, \mathbf{v}\rangle \cdot \mathbf{u}$} (vv);
+                            }
+                        \onslide<4> {
+                            \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,below right] {$\mathbf{v_\bot}$} (R3);
+                        }
+                    \end{tikzpicture}
+                    \caption{Representation in $S^2$}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{block}{Determine $\mathbf{v_\bot}$}
+                    \begin{equation}
+                        \mathbf{v_\bot} = \frac{\mathbf{v} - \langle \mathbf{u}, \mathbf{v}\rangle \cdot \mathbf{u}}{||\mathbf{v} - \langle \mathbf{u}, \mathbf{v}\rangle \cdot \mathbf{u}||}
+                    \end{equation}
+                \end{block}
+                
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{Determine $\mathbf{R_w}$ - Classical way}
+            \begin{minipage}{0.4\textwidth}
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \coordinate (R1) at (0.8,1.3);
+                        \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1);
+                        \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,above] {$\mathbf{v_\bot}$} (R3);
                         \begin{scope}[rotate around={-30:(0,0)}]
                             \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.36] (R3) coordinate[pos=0.61] (R4);
                             \draw[dashed] (2,0) arc (0:180:2 and 0.6);
@@ -333,14 +393,13 @@
                         
                         \onslide<1>{
                             \coordinate (R2) at (-0.2,1.15);
-                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$v$} (R2); 
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{v}$} (R2); 
                             \draw[thick,dotted] (R1) edge[in=30,out=175] (R2);
-                            \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,above] {$v_\bot$} (R3);
                             \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
-                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$w$} (R4);
+                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{w}$} (R4);
                         }
                         \onslide<2>{
-                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,below right] {$v$} (R1);
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,below right] {$\mathbf{v}$} (R3);
                         }
                     \end{tikzpicture}
                     \caption{Representation in $S^2$}
@@ -348,23 +407,23 @@
             \end{minipage}
             \hfill
             \begin{minipage}{0.55\textwidth}
-                \begin{block}{Determine w}
+                \begin{block}{Determine $R_w$}
                     \begin{equation}
                         \begin{split}
-                            \mathbf{w} &= \mathbf{u} \wedge \mathbf{v} \\
-                            \alpha &= arcsin(\mathbf{||w||}) \\
-                            R_w &= exp\left(\alpha\frac{\mathbf{w}}{||\mathbf{w}||}\right)
+                            \mathbf{w} &= \mathbf{v} \wedge \mathbf{v_\bot} \\
+                            \alpha &= arccos(\mathbf{||w||}) \\
+                            \mathbf{R_w} &= exp\left(\alpha\frac{\mathbf{w}}{\color<2>{red}{||\mathbf{w}||}}t\right)
                         \end{split}
                     \end{equation}
                 \end{block}
                 \begin{block}<2->{Issue}
                     \centering
-                    What if $\mathbf{u} = \mathbf{v}$ ?
+                    What if $\mathbf{v} = \mathbf{v_\bot}$ ?
                 \end{block}
             \end{minipage}
         \end{frame}
 
-        \begin{frame}{Vector to vector formulation}
+        \begin{frame}{Determine $\mathbf{R_w}$ - Codesido flavor}
             \begin{minipage}{0.4\textwidth}
                 \centering
                 \begin{figure}
@@ -372,21 +431,27 @@
                         \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
                         \draw[thick] (0,0) circle (2cm);
                         \coordinate (R1) at (0.8,1.3);
-                        \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1);
+                        \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1);
+                        \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,above] {$\mathbf{v_\bot}$} (R3);
                         \begin{scope}[rotate around={-30:(0,0)}]
-                            \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.2] (R3) coordinate[pos=0.36] (R4);
-                            \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                            \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.36] (R3) coordinate[pos=0.61] (R4);
+                            \draw[dashed] (2,0) arc (0:180:2 and 0.6)  coordinate[pos=0.36] (R5);
                         \end{scope}
-                        \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,left,yshift=0.4cm] {$u_\bot$} (R3);
-                        \onslide<2->{
+                        
+                        \onslide<1-2>{
                             \coordinate (R2) at (-0.2,1.15);
-                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$v$} (R2); 
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{v}$} (R2); 
+                            \draw[thick,dotted] (R1) edge[in=30,out=175] (R2);
+                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
+                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{w}$} (R4);
                         }
-                        \onslide<3->{
-                            \draw[thick,dotted,RoyalBlue,->,>=latex] (0,0) -- node[midway,below right] {$v_\bot$} (R4);
-                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R4);
-                            \coordinate (R5) at (0.4,-0.5);
-                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above right] {$w$} (R5);
+
+                        \onslide<3>{
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,below right] {$\mathbf{v}$} (R3);
+                        }
+
+                        \onslide<4>{
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,below right] {$\mathbf{v}$} (R5);
                         }
                     \end{tikzpicture}
                     \caption{Representation in $S^2$}
@@ -394,21 +459,100 @@
             \end{minipage}
             \hfill
             \begin{minipage}{0.55\textwidth}
-                \begin{block}<2->{Vector to vector formulation}
+                \begin{block}{Vector to vector formulation}
                     \begin{equation}
                         \begin{array}{rcl}
-                            \mathbf{K}_v^{u_\bot} & = & u_\bot v^T - vu_\bot^T \\
-                            \mathbf{R}_v^{u_\bot} & = & \mathbf{I} + \mathbf{K}_v^{u_\bot} + \frac{1}{1 + \langle v, u_\bot\rangle} (\mathbf{K}_v^{u_\bot})^2 \\
+                            \mathbf{K}_\mathbf{v}^{\mathbf{v_\bot}} & = & \mathbf{v_\bot} \mathbf{v}^T - \mathbf{v}\mathbf{v_\bot}^T \\
+                            \mathbf{R}_\mathbf{v}^{\mathbf{v_\bot}} & = & \mathbf{I} + \mathbf{K}_\mathbf{v}^{\mathbf{v_\bot}} + \frac{1}{1 + \color<4>{red}{\langle \mathbf{v}, \mathbf{v_\bot}\rangle}} (\mathbf{K}_\mathbf{v}^{\mathbf{v_\bot}})^2 \\
                         \end{array}
                     \end{equation}
                 \end{block}
-                \begin{block}<3->{Angular velocity w}
+                \begin{block}<2->{Angular velocity w}
                     \begin{equation}
-                        \mathbf{w} = \wedge^{-1}(log(\mathbf{R}_v^{u_\bot}))
+                        \mathbf{w} = \frac{1}{t}\wedge^{-1}(log(\mathbf{R}_v^{v_\bot}))
                     \end{equation}
+                \end{block}
+                \begin{block}<3->{No singularities}
+                    \vspace{.2cm}
+                    \begin{itemize}
+                        \item If $\mathbf{v} = \mathbf{v_\bot}$, $\mathbf{R_v^{v_\bot}} = \mathbf{I_3}$ 
+                        \item<4> Singularity when $\langle\mathbf{v}, \mathbf{v_\bot}\rangle = -1$
+                    \end{itemize}
                 \end{block}
             \end{minipage}
         \end{frame}
+
+        \begin{frame}{Limitations}
+            \begin{minipage}{0.4\textwidth}
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+                        \draw[thick] (0,0) circle (2cm);
+                        \coordinate (R1) at (0.8,1.3);
+                        \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1);
+                        \begin{scope}[rotate around={-30:(0,0)}]
+                            \draw[thick] (-2,0) arc (180:360:2 and 0.6);
+                            \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+                        \end{scope}
+                        \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{v}$} (R1); 
+                    \end{tikzpicture}
+                    \caption{Representation in $S^2$}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{block}{Limitation}
+                    If $\mathbf{u} = \mathbf{v}$, $\mathbf{v_\bot}$ is undefined
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        % \begin{frame}{Vector to vector formulation}
+        %     \begin{minipage}{0.4\textwidth}
+        %         \centering
+        %         \begin{figure}
+        %             \begin{tikzpicture}
+        %                 \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+        %                 \draw[thick] (0,0) circle (2cm);
+        %                 \coordinate (R1) at (0.8,1.3);
+        %                 \draw[thick,red,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1);
+        %                 \begin{scope}[rotate around={-30:(0,0)}]
+        %                     \draw[thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.2] (R3) coordinate[pos=0.36] (R4);
+        %                     \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+        %                 \end{scope}
+        %                 \draw[thick,RoyalBlue,->,>=latex] (0,0) -- node[midway,left,yshift=0.4cm] {$u_\bot$} (R3);
+        %                 \onslide<2->{
+        %                     \coordinate (R2) at (-0.2,1.15);
+        %                     \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{v}$} (R2); 
+        %                 }
+        %                 \onslide<3->{
+        %                     \draw[thick,dotted,RoyalBlue,->,>=latex] (0,0) -- node[midway,below right] {$\mathbf{v_\bot}$} (R4);
+        %                     \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R4);
+        %                     \coordinate (R5) at (0.4,-0.5);
+        %                     \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above right] {$\mathbf{w}$} (R5);
+        %                 }
+        %             \end{tikzpicture}
+        %             \caption{Representation in $S^2$}
+        %         \end{figure}
+        %     \end{minipage}
+        %     \hfill
+        %     \begin{minipage}{0.55\textwidth}
+        %         \begin{block}<2->{Vector to vector formulation}
+        %             \begin{equation}
+        %                 \begin{array}{rcl}
+        %                     \mathbf{K}_v^{u_\bot} & = & u_\bot v^T - vu_\bot^T \\
+        %                     \mathbf{R}_v^{u_\bot} & = & \mathbf{I} + \mathbf{K}_v^{u_\bot} + \frac{1}{1 + \langle v, u_\bot\rangle} (\mathbf{K}_v^{u_\bot})^2 \\
+        %                 \end{array}
+        %             \end{equation}
+        %         \end{block}
+        %         \begin{block}<3->{Angular velocity w}
+        %             \begin{equation}
+        %                 \mathbf{w} = \wedge^{-1}(log(\mathbf{R}_v^{u_\bot}))
+        %             \end{equation}
+        %         \end{block}
+        %     \end{minipage}
+        % \end{frame}
 
         \begin{frame}{Controller implementation}
             \centering
@@ -418,14 +562,14 @@
                     \begin{tikzpicture}[
                         input/.style={->,>=latex,thick,decorate,
                         decoration={snake,amplitude=.4mm,segment length=2mm,post length=2mm}},
-                        block/.style={draw,fill=white,font=\small,thick,
+                        block/.style={draw,font=\small,thick,
                             minimum width={2cm},minimum height={1.5cm}}]
 
                         \node[block,circle,align=center] (n1) {Orthogonal\\controller};
                         \node[block,circle,right=of n1] (n2) {Controller};
                         \node[block,rectangle,right=of n2] (n3) {AUV};
 
-                        \draw[thick,->,>=latex,RoyalBlue] (n1) to node[midway,above] {$w$} (n2);
+                        \draw[thick,->,>=latex,RoyalBlue] (n1) to node[midway,above] {$\mathbf{w}$} (n2);
                         
                         \foreach \i/\a/\s in {0/37.5/-2.4,1/12.5/-3,2/-12.5/-3,3/-37.5/-2.5} {
                             \draw[thick,->,>=latex,ForestGreen] (n2.\a) to node[near end,xshift=\s*1mm,yshift=1.5mm] {$u_\i$} ([yshift=0.6cm -\i * 0.4 cm]n3.west);
@@ -434,8 +578,8 @@
                         % inputs
                         \coordinate[above=of n1.100] (u);
                         \coordinate[above=of n1.80] (v);
-                        \draw[input,red] (u) -- node[midway,left,red] {$u$} (n1.100);
-                        \draw[input,ForestGreen] (v) -- node[midway,right,ForestGreen] {$v$} (n1.80);
+                        \draw[input,red] (u) -- node[midway,left,red] {$\mathbf{u}$} (n1.100);
+                        \draw[input,ForestGreen] (v) -- node[midway,right,ForestGreen] {$\mathbf{v}$} (n1.80);
                     \end{tikzpicture}
                     \caption{Block diagram}
                 \end{figure}
@@ -540,8 +684,8 @@
                         \coordinate (R1) at (0.5,1.2);
                         \draw [thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.25] (I) coordinate[pos=0.35] (R2) coordinate[pos=0.7] (R3);
                         \path[thick,ForestGreen,->,>=latex] (R1) edge[bend left=20] node[pos=0.65,right,ForestGreen] {$\omega_r$} (R3);
-                        \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above left] {$u$} (R1);
-                        \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above] {$v$} (R2);
+                        \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1);
+                        \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above] {$\mathbf{v}$} (R2);
                         \node[ForestGreen] at (R1) {$\bullet$} node[ForestGreen] at (R1) [above] {$\mathbf{R}_u$};
                         \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R3) [below] {$\mathbf{R}_u^v \cdot \mathbf{R}_u$};
                         \node[red] at (I) {$\bullet$} node[red] at (I) [below] {$I$};
