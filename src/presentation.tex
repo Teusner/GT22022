@@ -11,6 +11,10 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
+\usepackage[style=authoryear,backend=biber]{biblatex}
+\renewcommand*{\nameyeardelim}{\addcomma\addspace}
+\addbibresource{bib/abstract.bib}
+
 % Beamer configuration
 \usetheme[sectionpage=progressbar, numbering=counter, progressbar=frametitle]{metropolis}
 
@@ -421,16 +425,17 @@
                                 \frac{
                                     \mathbf{\color{RoyalPurple}{w}}
                                 }{
-                                    \color<3>{red}{||\mathbf{\color<1-2>{RoyalPurple}{w}}}||
+                                    \color<2>{red}{||\mathbf{\color<1>{RoyalPurple}{w}}}||
                                 }
                                 t\right)
                         \end{split}
                     \end{equation}
                 \end{block}
                 \begin{block}<2->{Issue}
-                    \centering
-                    What if $\mathbf{\color{ForestGreen}{v}} = \mathbf{\color{RoyalBlue}{v_\bot}}$ ? \\
-                    \onslide<3>{$\color{red}{||\mathbf{w}|| = 0}$}
+                    \vspace*{0.25cm}
+                    \begin{itemize}
+                        \item If $\mathbf{\color{ForestGreen}{v}} = \mathbf{\color{RoyalBlue}{v_\bot}}$, $||\mathbf{\color{RoyalPurple}{w}}|| = 0$
+                    \end{itemize}
                 \end{block}
             \end{minipage}
         \end{frame}
@@ -450,7 +455,7 @@
                             \draw[dashed] (2,0) arc (0:180:2 and 0.6)  coordinate[pos=0.36] (R5);
                         \end{scope}
                         
-                        \onslide<1-2>{
+                        \onslide<1>{
                             \coordinate (R2) at (-0.2,1.15);
                             \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{v}$} (R2); 
                             \draw[thick,dotted] (R1) edge[in=30,out=175] (R2);
@@ -458,11 +463,11 @@
                             \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{w}$} (R4);
                         }
 
-                        \onslide<3>{
+                        \onslide<2>{
                             \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,below right] {$\mathbf{v}$} (R3);
                         }
 
-                        \onslide<4>{
+                        \onslide<3>{
                             \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,below right] {$\mathbf{v}$} (R5);
                         }
                     \end{tikzpicture}
@@ -471,24 +476,24 @@
             \end{minipage}
             \hfill
             \begin{minipage}{0.55\textwidth}
-                \begin{block}{Vector to vector formulation}
+                \begin{block}{Codesido formula \footcite{Codesido}}
                     \begin{equation}
                         \begin{array}{rcl}
                             \mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}} & = & \mathbf{\color{RoyalBlue}{v_\bot}} \mathbf{\color{ForestGreen}{v}}^T - \mathbf{\color{ForestGreen}{v}}\mathbf{\color{RoyalBlue}{v_\bot}}^T \\
-                            \mathbf{R}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}} & = & \mathbf{I_3} + \mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}} + \frac{1}{1 + \color<4>{red}{\langle \mathbf{\color{ForestGreen}{v}}, \mathbf{\color{RoyalBlue}{v_\bot}}\rangle}} (\mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}})^2 \\
+                            \mathbf{R}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}} & = & \mathbf{I_3} + \mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}} + \frac{1}{1 + \color<3>{red}{\langle \mathbf{\color<-2>{ForestGreen}{v}}, \mathbf{\color<-2>{RoyalBlue}{v_\bot}}\rangle}} (\mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}})^2 \\
                         \end{array}
                     \end{equation}
                 \end{block}
-                \begin{block}<2->{Angular velocity w}
-                    \begin{equation}
-                        \mathbf{\color{RoyalPurple}{w}} = \frac{1}{t} Log(\mathbf{R}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}})
-                    \end{equation}
-                \end{block}
-                \begin{block}<3->{No singularities}
+                % \begin{block}<2->{Angular velocity w}
+                %     \begin{equation}
+                %         \mathbf{\color{RoyalPurple}{w}} = \frac{1}{t} Log(\mathbf{R}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}})
+                %     \end{equation}
+                % \end{block}
+                \begin{block}<2->{No singularities}
                     \vspace{.2cm}
                     \begin{itemize}
                         \item If $\mathbf{\color{ForestGreen}{v}} = \mathbf{\color{RoyalBlue}{v_\bot}}$, $\mathbf{R_{{\color{ForestGreen}{v}}}^{{\color{RoyalBlue}{v_\bot}}}} = \mathbf{I_3}$ 
-                        \item<4> Singularity when $\langle\mathbf{\color{ForestGreen}{v}}, \mathbf{\color{RoyalBlue}{v_\bot}}\rangle = -1$
+                        \item<3> Singularity when $\langle\mathbf{\color{ForestGreen}{v}}, \mathbf{\color{RoyalBlue}{v_\bot}}\rangle = -1$
                     \end{itemize}
                 \end{block}
             \end{minipage}
