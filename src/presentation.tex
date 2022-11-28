@@ -474,21 +474,21 @@
                 \begin{block}{Vector to vector formulation}
                     \begin{equation}
                         \begin{array}{rcl}
-                            \mathbf{K}_\mathbf{v}^{\mathbf{v_\bot}} & = & \mathbf{v_\bot} \mathbf{v}^T - \mathbf{v}\mathbf{v_\bot}^T \\
-                            \mathbf{R}_\mathbf{v}^{\mathbf{v_\bot}} & = & \mathbf{I} + \mathbf{K}_\mathbf{v}^{\mathbf{v_\bot}} + \frac{1}{1 + \color<4>{red}{\langle \mathbf{v}, \mathbf{v_\bot}\rangle}} (\mathbf{K}_\mathbf{v}^{\mathbf{v_\bot}})^2 \\
+                            \mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}} & = & \mathbf{\color{RoyalBlue}{v_\bot}} \mathbf{\color{ForestGreen}{v}}^T - \mathbf{\color{ForestGreen}{v}}\mathbf{\color{RoyalBlue}{v_\bot}}^T \\
+                            \mathbf{R}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}} & = & \mathbf{I_3} + \mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}} + \frac{1}{1 + \color<4>{red}{\langle \mathbf{\color{ForestGreen}{v}}, \mathbf{\color{RoyalBlue}{v_\bot}}\rangle}} (\mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}})^2 \\
                         \end{array}
                     \end{equation}
                 \end{block}
                 \begin{block}<2->{Angular velocity w}
                     \begin{equation}
-                        \mathbf{w} = \frac{1}{t}\wedge^{-1}(log(\mathbf{R}_v^{v_\bot}))
+                        \mathbf{\color{RoyalPurple}{w}} = \frac{1}{t} Log(\mathbf{R}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}})
                     \end{equation}
                 \end{block}
                 \begin{block}<3->{No singularities}
                     \vspace{.2cm}
                     \begin{itemize}
-                        \item If $\mathbf{v} = \mathbf{v_\bot}$, $\mathbf{R_v^{v_\bot}} = \mathbf{I_3}$ 
-                        \item<4> Singularity when $\langle\mathbf{v}, \mathbf{v_\bot}\rangle = -1$
+                        \item If $\mathbf{\color{ForestGreen}{v}} = \mathbf{\color{RoyalBlue}{v_\bot}}$, $\mathbf{R_{{\color{ForestGreen}{v}}}^{{\color{RoyalBlue}{v_\bot}}}} = \mathbf{I_3}$ 
+                        \item<4> Singularity when $\langle\mathbf{\color{ForestGreen}{v}}, \mathbf{\color{RoyalBlue}{v_\bot}}\rangle = -1$
                     \end{itemize}
                 \end{block}
             \end{minipage}
