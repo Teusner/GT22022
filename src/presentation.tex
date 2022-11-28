@@ -66,10 +66,10 @@
 
     \maketitle
 
-    % \begin{frame}{Table of contents}
-    %     \setbeamertemplate{section in toc}[sections numbered]
-    %     \tableofcontents[hideallsubsections]
-    % \end{frame}
+    \begin{frame}{Table of contents}
+        \setbeamertemplate{section in toc}[sections numbered]
+        \tableofcontents[hideallsubsections]
+    \end{frame}
 
     \section{Context}
 
@@ -373,7 +373,7 @@
             \begin{minipage}{0.55\textwidth}
                 \begin{block}{Determine $\mathbf{v_\bot}$}
                     \begin{equation}
-                        \mathbf{v_\bot} = \frac{\mathbf{v} - \langle \mathbf{u}, \mathbf{v}\rangle \cdot \mathbf{u}}{||\mathbf{v} - \langle \mathbf{u}, \mathbf{v}\rangle \cdot \mathbf{u}||}
+                        \mathbf{\color{RoyalBlue}{v_\bot}} = \frac{\mathbf{\color{ForestGreen}{v}} - \langle \mathbf{\color{red}{u}}, \mathbf{\color{ForestGreen}{v}}\rangle \cdot \mathbf{\color{red}{u}}}{||\mathbf{\color{ForestGreen}{v}} - \langle \mathbf{\color{red}{u}}, \mathbf{\color{ForestGreen}{v}}\rangle \cdot \mathbf{\color{red}{u}}||}
                     \end{equation}
                 \end{block}
                 
@@ -399,10 +399,10 @@
                             \coordinate (R2) at (-0.2,1.15);
                             \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{v}$} (R2); 
                             \draw[thick,dotted] (R1) edge[in=30,out=175] (R2);
-                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
+                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] node[midway, left] {$\alpha$} (R3);
                             \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{w}$} (R4);
                         }
-                        \onslide<2>{
+                        \onslide<2->{
                             \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,below right] {$\mathbf{v}$} (R3);
                         }
                     \end{tikzpicture}
@@ -414,15 +414,23 @@
                 \begin{block}{Determine $R_w$}
                     \begin{equation}
                         \begin{split}
-                            \mathbf{w} &= \mathbf{v} \wedge \mathbf{v_\bot} \\
-                            \alpha &= arccos(\mathbf{||w||}) \\
-                            \mathbf{R_w} &= exp\left(\alpha\frac{\mathbf{w}}{\color<2>{red}{||\mathbf{w}||}}t\right)
+                            \mathbf{\color{RoyalPurple}{w}} &= \mathbf{\color{ForestGreen}{v}} \wedge \mathbf{\color{RoyalBlue}{v_\bot}} \\
+                            \color{RoyalPurple}{\alpha} &= arccos(\mathbf{||\color{RoyalPurple}{w}}||) \\
+                            \mathbf{R_{\color{RoyalPurple}{w}}} &= exp\left(
+                                {\color{RoyalPurple}{\alpha}}
+                                \frac{
+                                    \mathbf{\color{RoyalPurple}{w}}
+                                }{
+                                    \color<3>{red}{||\mathbf{\color<1-2>{RoyalPurple}{w}}}||
+                                }
+                                t\right)
                         \end{split}
                     \end{equation}
                 \end{block}
                 \begin{block}<2->{Issue}
                     \centering
-                    What if $\mathbf{v} = \mathbf{v_\bot}$ ?
+                    What if $\mathbf{\color{ForestGreen}{v}} = \mathbf{\color{RoyalBlue}{v_\bot}}$ ? \\
+                    \onslide<3>{$\color{red}{||\mathbf{w}|| = 0}$}
                 \end{block}
             \end{minipage}
         \end{frame}
@@ -512,7 +520,485 @@
             \end{minipage}
         \end{frame}
 
-        % \begin{frame}{Vector to vector formulation}
+        \begin{frame}{Controller implementation}
+            \centering
+            \begin{minipage}{0.8\textwidth}
+                \centering
+                \begin{figure}
+                    \begin{tikzpicture}[
+                        input/.style={->,>=latex,thick,decorate,
+                        decoration={snake,amplitude=.4mm,segment length=2mm,post length=2mm}},
+                        block/.style={draw,font=\small,thick,
+                            minimum width={2cm},minimum height={1.5cm}}]
+
+                        \node[block,circle,align=center] (n1) {Orthogonal\\controller};
+                        \node[block,circle,right=of n1] (n2) {Controller};
+                        \node[block,rectangle,right=of n2] (n3) {AUV};
+
+                        \draw[thick,->,>=latex,RoyalBlue] (n1) to node[midway,above] {$\mathbf{w}$} (n2);
+                        
+                        \foreach \i/\a/\s in {0/37.5/-2.4,1/12.5/-3,2/-12.5/-3,3/-37.5/-2.5} {
+                            \draw[thick,->,>=latex,ForestGreen] (n2.\a) to node[near end,xshift=\s*1mm,yshift=1.5mm] {$u_\i$} ([yshift=0.6cm -\i * 0.4 cm]n3.west);
+                        }
+                        
+                        % inputs
+                        \coordinate[above=of n1.100] (u);
+                        \coordinate[above=of n1.80] (v);
+                        \draw[input,red] (u) -- node[midway,left,red] {$\mathbf{u}$} (n1.100);
+                        \draw[input,ForestGreen] (v) -- node[midway,right,ForestGreen] {$\mathbf{v}$} (n1.80);
+                    \end{tikzpicture}
+                    \caption{Block diagram}
+                \end{figure}
+            \end{minipage}
+            \hfill
+        \end{frame}
+    
+    \section{Application}
+
+        \begin{frame}{2D Wall avoidance - Classical way}
+            \begin{minipage}{0.4\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \draw (0,-2) --++(90:4cm);
+                        \fill[pattern=north west lines] (0,-2) rectangle ++(-.3,4);
+
+                        \onslide<2-> {
+                            \draw[thick,red,->,>=latex] (.25,0) -- ++(0,1) node[midway,right] {$\mathbf{u}$};
+                        }
+                        
+                        \onslide<3-> {
+                            \begin{scope}[xshift=3cm,yshift=.5cm]
+                                \coordinate (c1) at (0,0);
+                                \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
+                            \end{scope}
+                            \path[draw,thick,RoyalBlue] (n1) arc (245:180:1.2cm) -- ++(0,.15);
+                            \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
+                        }
+
+                        \onslide<4-> {
+                            \begin{scope}[xshift=3cm,yshift=-.5cm]
+                                \coordinate (c2) at (0,0);
+                                \path[rotate=205,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
+                            \end{scope}
+                            \path[draw,thick,RoyalBlue] (n2) arc (-65:-180:1.2cm) -- ++(0,1.6);
+                            \draw[rotate=205,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
+                        }
+                    \end{tikzpicture}
+                    \caption{Wall avoidance - Classical control}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}[decoration=triangles]
+                        \foreach \n/\a in {n1/90, n2/270} {
+                            \coordinate (\n) at (\a:1.5cm);
+                        }
+
+                        \path[draw] (n2) arc (-90:90:1.5cm);
+                        \path[draw] (n2) arc (270:90:1.5cm);
+
+                        \onslide<2-> {
+                            \path[draw,thick,RoyalBlue] (n2) arc (-90:90:1.5cm);
+                            \path[draw,thick,RoyalBlue] (n2) arc (270:90:1.5cm);
+                        }
+
+                        \onslide<3-> {
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (-90:90:1.5cm);
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (270:90:1.5cm);
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (155:1.5) node[midway,above] {$\mathbf{v_1}$};
+                        }
+
+                        \onslide<2-> {
+                            \filldraw[RoyalBlue] (n1) circle (3pt) node[above] {control};
+                            \filldraw[red] (n2) circle (3pt) node[below] {singularity};
+                        }
+
+                        \onslide<4-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (205:1.5) node[midway,below] {$\mathbf{v_2}$};
+                        }
+
+                        \filldraw (0,0) circle (1pt);
+                    \end{tikzpicture}
+                    \caption{Representation in $S^1$}
+                \end{figure}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{2D Wall avoidance - Orthogonal control}
+            \begin{minipage}{0.4\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \draw (0,-2) --++(90:4cm);
+                        \fill[pattern=north west lines] (0,-2) rectangle ++(-.3,4);
+
+                        \onslide<2-> {
+                            \draw[thick,red,->,>=latex] (0,0) -- ++(1,0) node[midway,above] {$\mathbf{u}$};
+                        }
+                        
+                        \onslide<3-> {
+                            \begin{scope}[xshift=3cm,yshift=.5cm]
+                                \coordinate (c1) at (0,0);
+                                \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
+                            \end{scope}
+                            \path[draw,thick,RoyalBlue] (n1) arc (245:180:1.2cm) -- ++(0,.15);
+                            \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
+                        }
+                        
+                        \onslide<4-> {
+                            \begin{scope}[xshift=3cm,yshift=-.5cm]
+                                \coordinate (c2) at (0,0);
+                                \path[rotate=205,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
+                            \end{scope}
+                            \path[draw,thick,RoyalPurple] (n2) arc (115:180:1.2cm) -- ++(0,-.15);
+                            \draw[rotate=205,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
+                        }
+                    \end{tikzpicture}
+                    \caption{Wall avoidance - Proposed approach}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}[decoration=triangles]
+
+                        \foreach \n/\a in {n1/0, n2/90, n3/180, n4/270} {
+                            \coordinate (\n) at (\a:1.5cm);
+                        }
+
+                        \path[draw] (n1.north) arc (0:90:1.5cm);
+                        \path[draw] (n3.north) arc (180:90:1.5cm);
+                        \path[draw] (n3.south) arc (180:270:1.5cm);
+                        \path[draw] (n1.south) arc (360:270:1.5cm);
+
+                        \onslide<2-> {
+                            \path[draw,thick,RoyalBlue] (n1.north) arc (0:90:1.5cm);
+                            \path[draw,thick,RoyalBlue] (n3.north) arc (180:90:1.5cm);
+                            \path[draw,thick,RoyalPurple] (n3.south) arc (180:270:1.5cm);
+                            \path[draw,thick,RoyalPurple] (n1.south) arc (360:270:1.5cm);
+                        }
+
+                        \onslide<3-> {
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n1.north) arc (0:90:1.5cm);
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n3.north) arc (180:90:1.5cm);
+                        }
+
+                        \onslide<4-> {
+                            \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n3.south) arc (180:270:1.5cm);
+                            \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n1.south) arc (360:270:1.5cm);
+                        }
+
+                        \onslide<2-> {
+                            \foreach \n/\c in {n1/red, n2/RoyalBlue, n3/red, n4/RoyalPurple} {
+                                \filldraw[\c] (\n) circle (3pt);
+                            }
+                            \filldraw[RoyalBlue] (n2) circle (3pt) node[above] {control};
+                            \filldraw[red] (n1) circle (3pt) node[right] {singularity};
+                            \filldraw[red] (n3) circle (3pt) node[left] {singularity};
+                            \filldraw[RoyalPurple] (n4) circle (3pt) node[below] {control};
+                        }
+
+                        \onslide<3-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (155:1.5) node[midway,above] {$\mathbf{v_1}$};
+                        }
+
+                        \onslide<4-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (205:1.5) node[midway,below] {$\mathbf{v_2}$};
+                        }
+                        \filldraw (0,0) circle (1pt);
+                    \end{tikzpicture}
+                    \caption{Representation in $S^1$}
+                \end{figure}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{2D Pipe following - Classical way}
+            \begin{minipage}{0.4\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \begin{scope}[rotate=35]
+                            \def\r{.2};
+                            \def\h{4};
+                            \draw[fill=gray!60]  (-\h/2,\r) to[out=0,in=60]  (-\h/2,0) to[out=120,in=180] cycle;
+                            \draw[fill=gray!30] (-\h/2,\r) to[out=0,in=60] (-\h/2,0) to[out=-120,in=180] (-\h/2,-\r) -- (\h/2,-\r) to[out=180,in=-120] (\h/2,0) to[out=60,in=0] (\h/2,\r) -- cycle;
+                            \draw[fill=gray!60]  (\h/2,-\r) to[out=180,in=-120]  (\h/2,0) to[out=-60,in=0] cycle;
+                        \end{scope}
+
+                        \onslide<2-> {
+                            \draw[thick,red,->,>=latex] (0,0) -- +(35:1cm) node[midway,xshift=-.2cm,yshift=.25cm] {$\mathbf{u}$};
+                        }
+                        
+                        \onslide<3-> {
+                            \begin{scope}[xshift=2cm,yshift=-.5cm]
+                                \coordinate (c1) at (0,0);
+                                \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
+                                \path[rotate=155, draw,thick,RoyalBlue] (n1) arc (90:-25:1.2cm) -- ++(-115:0);
+                                \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
+                            \end{scope}
+                        }
+                        
+                        \onslide<4-> {
+                            \begin{scope}[xshift=-2cm,yshift=.5cm]
+                                \coordinate (c2) at (0,0);
+                                \path[rotate=-25,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
+                                \path[rotate=-25,draw,thick,RoyalBlue] (n2) arc (-90:-30:1.2cm) -- ++(60:2);
+                                \draw[rotate=-25,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
+                            \end{scope}
+                        }
+                    \end{tikzpicture}
+                    \caption{Pipe following - Proposed approach}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}[decoration=triangles,rotate=-65]
+                        \foreach \n/\a in {n1/90, n2/270} {
+                            \coordinate (\n) at (\a:1.5cm);
+                        }
+                        \path[draw] (n2) arc (-90:90:1.5cm);
+                        \path[draw] (n2) arc (270:90:1.5cm);
+
+                        \onslide<2-> {
+                            \path[draw,thick,RoyalBlue] (n2) arc (-90:90:1.5cm);
+                            \path[draw,thick,RoyalBlue] (n2) arc (270:90:1.5cm);
+                        }
+
+                        \onslide<3-> {
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (270:90:1.5cm);
+                        }
+                            
+                        \onslide<4-> {
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (-90:90:1.5cm);
+                        }
+                        
+                        \onslide<2-> {
+                            \filldraw[RoyalBlue] (n1) circle (3pt) node[yshift=.3cm,right] {control};
+                            \filldraw[red] (n2) circle (3pt) node[yshift=-.3cm,left] {singularity};
+                        }
+
+                        \onslide<3-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (210:1.5) node[midway,above] {$\mathbf{v_1}$};
+                        }
+
+                        \onslide<4-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (40:1.5) node[midway,below] {$\mathbf{v_2}$};
+                        }
+
+                        \filldraw (0,0) circle (1pt);
+                    \end{tikzpicture}
+                    \caption{Representation in $S^1$}
+                \end{figure}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{2D Wall avoidance - Orthogonal control}
+            \begin{minipage}{0.4\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \begin{scope}[rotate=35]
+                            \def\r{.2};
+                            \def\h{4};
+                            \draw[fill=gray!60]  (-\h/2,\r) to[out=0,in=60]  (-\h/2,0) to[out=120,in=180] cycle;
+                            \draw[fill=gray!30] (-\h/2,\r) to[out=0,in=60] (-\h/2,0) to[out=-120,in=180] (-\h/2,-\r) -- (\h/2,-\r) to[out=180,in=-120] (\h/2,0) to[out=60,in=0] (\h/2,\r) -- cycle;
+                            \draw[fill=gray!60]  (\h/2,-\r) to[out=180,in=-120]  (\h/2,0) to[out=-60,in=0] cycle;
+                        \end{scope}
+
+                        \onslide<2-> {
+                            \draw[thick,red,->,>=latex] (0,0) -- +(125:1cm) node[midway,xshift=.1cm,yshift=.35cm] {$\mathbf{u}$};
+                        }
+
+                        \onslide<3-> {
+                            \begin{scope}[xshift=-2cm,yshift=.5cm]
+                                \coordinate (c2) at (0,0);
+                                \path[rotate=-25,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
+                                \path[rotate=-25,draw,thick,RoyalBlue] (n2) arc (-90:-30:1.2cm) -- ++(60:2);
+                                \draw[rotate=-25,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
+                            \end{scope}
+                        }
+                        
+                        \onslide<4-> {
+                            \begin{scope}[xshift=2cm,yshift=-.5cm]
+                                \coordinate (c1) at (0,0);
+                                \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
+                                \path[rotate=155, draw,thick,RoyalPurple] (n1) arc (-90:-30:1.2cm) -- ++(60:2);
+                                \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
+                            \end{scope}
+                        }
+                    \end{tikzpicture}
+                    \caption{Pipe following - Proposed approach}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}[decoration=triangles,rotate=-35]
+                        \foreach \n/\a in {n1/0, n2/90, n3/180, n4/270} {
+                            \coordinate (\n) at (\a:1.5cm);
+                        }
+                        \path[draw] (n1.north) arc (0:90:1.5cm);
+                        \path[draw] (n3.north) arc (180:90:1.5cm);
+                        \path[draw] (n3.south) arc (180:270:1.5cm);
+                        \path[draw] (n1.south) arc (360:270:1.5cm);
+
+                        \onslide<2-> {
+                            \path[draw,thick,RoyalBlue] (n1.north) arc (0:90:1.5cm);
+                            \path[draw,thick,RoyalBlue] (n3.north) arc (180:90:1.5cm);
+                            \path[draw,thick,RoyalPurple] (n3.south) arc (180:270:1.5cm);
+                            \path[draw,thick,RoyalPurple] (n1.south) arc (360:270:1.5cm);
+                        }
+                        
+                        \onslide<3-> {
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n1.north) arc (0:90:1.5cm);
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n3.north) arc (180:90:1.5cm);
+                        }
+
+                        \onslide<4-> {
+                            \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n3.south) arc (180:270:1.5cm);
+                            \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n1.south) arc (360:270:1.5cm);
+                        }
+
+                        \onslide<2-> {
+                            \foreach \n/\c in {n1/red, n2/RoyalBlue, n3/red, n4/RoyalPurple} {
+                                \filldraw[\c] (\n) circle (3pt);
+                            }
+                            \filldraw[RoyalBlue] (n2) circle (3pt) node[yshift=.3cm,right] {control};
+                            \filldraw[red] (n1) circle (3pt) node[right,xshift=.1cm] {singularity};
+                            \filldraw[red] (n3) circle (3pt) node[left,xshift=-.1cm] {singularity};
+                            \filldraw[RoyalPurple] (n4) circle (3pt) node[yshift=-.3cm,left] {control};
+                        }
+
+                        \onslide<3-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (10:1.5) node[midway,below] {$\mathbf{v_1}$};
+                        }
+
+                        \onslide<4-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (190:1.5) node[midway,above] {$\mathbf{v_2}$};
+                        }
+
+                        \filldraw (0,0) circle (1pt);
+                    \end{tikzpicture}
+                    \caption{Representation in $S^1$}
+                \end{figure}
+            \end{minipage}
+        \end{frame}
+
+    \section{Orthogonal constraint}
+    
+        \begin{frame}{Summary of orthogonal constraints}
+            \begin{figure}
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_0_constraints}}
+                    \caption{No constraints}
+                    \label{fig:constraints_0}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_1_constraints}}
+                    \caption{1 constraint $(i_0 \bot k_1)$}
+                    \label{fig:constraints_1}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_2_constraints}}
+                    \caption{2 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$}
+                    \label{fig:constraints_2}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_3_constraints}}
+                    \caption{3 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$, $(j_0 \bot i_1)$}
+                    \label{fig:constraints_3}
+                \end{subfigure}
+                \caption{All combinations of orthogonal constraints in 3 dimensions}
+            \end{figure}
+        \end{frame}
+
+
+
+
+    % \section{Control}
+
+    %     \begin{frame}{Control}
+    %         \centering
+    %         \begin{minipage}{0.7\textwidth}
+    %             \begin{block}{Control inputs}
+    %                 \centering
+    %                 Controlled physical quantites are linear acceleration $\mathbf{a_r}$ and angular velocity $\mathbf{\omega_r}$
+    %             \end{block}
+    %             \begin{block}{State Equation}
+    %                 \begin{eqnarray}
+    %                     \left\{
+    %                         \begin{array}{rcl}
+    %                             \dot{\mathbf{p}} & = & \mathbf{R} \cdot \mathbf{v_r} \\
+    %                             \dot{\mathbf{R}} & = & \mathbf{R} \cdot (\mathbf{\omega_r} \wedge) \\
+    %                             \dot{\mathbf{v_r}} & = & \mathbf{R}^T \cdot g(\mathbf{p}) + \mathbf{a_r} - \mathbf{\omega_r} \wedge \mathbf{v_r}
+    %                         \end{array}
+    %                     \right.
+    %                 \end{eqnarray}
+    %             \end{block}
+    %         \end{minipage}
+    %     \end{frame}
+
+    %     \begin{frame}{Control}
+    %         \centering
+    %         \begin{minipage}{0.7\textwidth}
+    %             \begin{figure}
+    %                 \begin{tikzpicture}
+    %                     \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+    %                     \draw[thick] (0,0) circle (2cm);
+    %                     \draw [thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.25] (I) coordinate[pos=0.7] (R2);
+    %                     \coordinate (R1) at (0,1.2);
+    %                     \path[thick,ForestGreen,->,>=latex] (R1) edge[bend left] node[pos=0.65,right,ForestGreen] {$\omega_r$} (R2);
+    %                     \node[ForestGreen] at (R1) {$\bullet$} node[ForestGreen] at (R1) [above] {$\mathbf{R}_u$};
+    %                     \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R2) [below] {$\mathbf{R}_v$};
+    %                     \node[red] at (I) {$\bullet$} node[red] at (I) [below] {$\mathbf{I}$};
+    %                     \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+    %                 \end{tikzpicture}
+    %                 \caption{$SO(3)$}
+    %             \end{figure}
+    %         \end{minipage}
+    %     \end{frame}
+
+    %     \begin{frame}{RotUV}
+    %         \centering
+    %         \begin{minipage}{0.3\textwidth}
+    %             \begin{figure}
+    %                 \begin{tikzpicture}
+    %                     \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
+    %                     \draw[thick] (0,0) circle (2cm);
+    %                     \coordinate (R1) at (0.5,1.2);
+    %                     \draw [thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.25] (I) coordinate[pos=0.35] (R2) coordinate[pos=0.7] (R3);
+    %                     \path[thick,ForestGreen,->,>=latex] (R1) edge[bend left=20] node[pos=0.65,right,ForestGreen] {$\omega_r$} (R3);
+    %                     \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1);
+    %                     \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above] {$\mathbf{v}$} (R2);
+    %                     \node[ForestGreen] at (R1) {$\bullet$} node[ForestGreen] at (R1) [above] {$\mathbf{R}_u$};
+    %                     \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R3) [below] {$\mathbf{R}_u^v \cdot \mathbf{R}_u$};
+    %                     \node[red] at (I) {$\bullet$} node[red] at (I) [below] {$I$};
+    %                     \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R2) [below] {$\mathbf{R}_v$};
+    %                     \draw[dashed] (2,0) arc (0:180:2 and 0.6);
+    %                 \end{tikzpicture}
+    %                 \caption{$SO(3)$}
+    %             \end{figure}
+    %         \end{minipage}
+    %         \hfill
+    %         \begin{minipage}{0.55\textwidth}
+    %             \begin{block}{Vector to vector formulation}
+    %                 \begin{equation}
+    %                     \begin{array}{rcl}
+    %                         \mathbf{K}_u^v & = & vu^T - uv^T \\
+    %                         \mathbf{R}_u^v & = & \mathbf{I} + \mathbf{K}_u^v + \frac{1}{1 + \langle u, v\rangle} (\mathbf{K}_u^v)^2
+    %                     \end{array}
+    %                 \end{equation}
+    %             \end{block}
+    %         \end{minipage}
+    %     \end{frame}
+
+     % \begin{frame}{Vector to vector formulation}
         %     \begin{minipage}{0.4\textwidth}
         %         \centering
         %         \begin{figure}
@@ -558,400 +1044,143 @@
         %     \end{minipage}
         % \end{frame}
 
-        \begin{frame}{Controller implementation}
-            \centering
-            \begin{minipage}{0.8\textwidth}
-                \centering
-                \begin{figure}
-                    \begin{tikzpicture}[
-                        input/.style={->,>=latex,thick,decorate,
-                        decoration={snake,amplitude=.4mm,segment length=2mm,post length=2mm}},
-                        block/.style={draw,font=\small,thick,
-                            minimum width={2cm},minimum height={1.5cm}}]
+    % \appendix
 
-                        \node[block,circle,align=center] (n1) {Orthogonal\\controller};
-                        \node[block,circle,right=of n1] (n2) {Controller};
-                        \node[block,rectangle,right=of n2] (n3) {AUV};
+    % \begin{frame}[standout]
+    %     Questions?
+    % \end{frame}
 
-                        \draw[thick,->,>=latex,RoyalBlue] (n1) to node[midway,above] {$\mathbf{w}$} (n2);
-                        
-                        \foreach \i/\a/\s in {0/37.5/-2.4,1/12.5/-3,2/-12.5/-3,3/-37.5/-2.5} {
-                            \draw[thick,->,>=latex,ForestGreen] (n2.\a) to node[near end,xshift=\s*1mm,yshift=1.5mm] {$u_\i$} ([yshift=0.6cm -\i * 0.4 cm]n3.west);
-                        }
-                        
-                        % inputs
-                        \coordinate[above=of n1.100] (u);
-                        \coordinate[above=of n1.80] (v);
-                        \draw[input,red] (u) -- node[midway,left,red] {$\mathbf{u}$} (n1.100);
-                        \draw[input,ForestGreen] (v) -- node[midway,right,ForestGreen] {$\mathbf{v}$} (n1.80);
-                    \end{tikzpicture}
-                    \caption{Block diagram}
-                \end{figure}
-            \end{minipage}
-            \hfill
-        \end{frame}
-    
-    \section{Application}
+    % \begin{frame}{Torpedo model}
+    %     \centering
+    %     \begin{minipage}{0.7\textwidth}
+    %         \begin{block}{Torpedo assumptions}
+    %             The following statements are equivalent
+    %             \begin{itemize}
+    %                 \item No side slip effect \\
+    %                 \item No lateral speed
+    %                 \item Velocity along the $\mathnormal{x}$ axis \\
+    %             \end{itemize}
+    %         \end{block}
+    %         \begin{block}{Torpedo velocity}
+    %             \begin{equation}
+    %                 \mathbf{v_r} = (v_r, 0, 0)^T
+    %             \end{equation}
+    %         \end{block}
+    %     \end{minipage}
+    % \end{frame}
 
-        \begin{frame}{2D example}
-            \begin{minipage}{0.4\textwidth}
-                \begin{figure}
-                    \begin{tikzpicture}
-                        \draw (0,-2) --++(90:4cm);
-                        \fill[pattern=north west lines] (0,-2) rectangle ++(-.3,4);
-                        \draw[thick,red,->,>=latex] (0,0) -- (+1,0) node[midway,above] {$\mathbf{u}$};
+    % \begin{frame}{State Equation}
+    %     \centering
+    %     \begin{minipage}{0.7\textwidth}
+    %         \begin{block}{AUV state}
+    %             The state of the AUV is denoted by $\mathbf{X} = (\mathbf{p}, \mathbf{v_r}, \mathbf{R})$, where:
+    %             \begin{itemize}
+    %                 \item $\mathbf{p}$ is the position of the AUV \\
+    %                 \item $\mathbf{v_r}$ is the velocity of the AUV in its frame \\
+    %                 \item $\mathbf{R}$ is the rotation matrix between the world and the AUV \\
+    %             \end{itemize}
+    %         \end{block}
+    %         \begin{block}{State Equation}
+    %             \begin{eqnarray}
+    %                 \left\{
+    %                     \begin{array}{rcl}
+    %                         \dot{\mathbf{p}} & = & \mathbf{R} \cdot \mathbf{v_r} \\
+    %                         \dot{\mathbf{R}} & = & \mathbf{R} \cdot (\mathbf{\omega_r} \wedge) \\
+    %                         \dot{\mathbf{v_r}} & = & \mathbf{R}^T \cdot g(\mathbf{p}) + \mathbf{a_r}
+    %                     \end{array}
+    %                 \right.
+    %             \end{eqnarray}
+    %         \end{block}
+    %     \end{minipage}
+    % \end{frame}
 
-                        \begin{scope}[xshift=3cm,yshift=.5cm]
-                            \coordinate (c1) at (0,0);
-                            \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
-                        \end{scope}
-                        
-                        \path[draw,thick,RoyalBlue] (n1) arc (245:180:1.2cm) -- ++(0,.15);
-                        \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
+    % \begin{frame}{Inputs}
+    %     \centering
+    %     \begin{minipage}{0.7\textwidth}
+    %         \begin{block}{Inputs}
+    %             \centering
+    %             Input vector of the system is $\mathbf{u} = (u_0, u_1, u_2, u_3)^T$, where:
+    %             \begin{itemize}
+    %                 \item $u_0$: thruster velocity \\
+    %                 \item $u_1, u_2, u_3$: fin angles
+    %             \end{itemize}
+    %         \end{block}
+    %     \end{minipage}
+    % \end{frame}
 
-                        \begin{scope}[xshift=3cm,yshift=-.5cm]
-                            \coordinate (c2) at (0,0);
-                            \path[rotate=205,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
-                        \end{scope}
-                        \path[draw,thick,RoyalBlue] (n2) arc (-65:-180:1.2cm) -- ++(0,1.6);
-                        \draw[rotate=205,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
-                    \end{tikzpicture}
-                    \caption{Wall avoidance - Classical control}
-                \end{figure}
-            \end{minipage}
-            \hfill
-            \begin{minipage}{0.55\textwidth}
-                \begin{figure}
-                    \begin{tikzpicture}[decoration=triangles]
-                        \foreach \n/\a in {n1/90, n2/270} {
-                            \coordinate (\n) at (\a:1.5cm);
-                        }
+    % \begin{frame}{Linear acceleration}
+    %     \centering
+    %     \begin{minipage}{0.7\textwidth}
+    %         \begin{block}{Assumptions}
+    %             \vspace{0.2cm}
+    %             \begin{itemize}
+    %                 \item Quadratic thrust with velocity
+    %                 \item Quadratic drag with velocity
+    %             \end{itemize}
+    %         \end{block}
+    %         \begin{block}{Linear acceleration}
+    %             \begin{equation}
+    %                 \mathbf{a_r} = \underbrace{p_1 \cdot \left(\begin{smallmatrix}u_0 \\ 0 \\ 0 \end{smallmatrix}\right)^2}_{thrust} - \underbrace{p_2 \cdot \mathbf{v_r} \cdot |\mathbf{v_r}|}_{drag}
+    %             \end{equation}
+    %         \end{block}
+    %     \end{minipage}
+    % \end{frame}
 
-                        \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (-90:90:1.5cm);
-                        \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (270:90:1.5cm);
+    % \begin{frame}{Angular velocity}
+    %     \centering
+    %     \begin{minipage}{0.8\textwidth}
+    %         \begin{block}{Assumptions}
+    %             \vspace{0.2cm}
+    %             \begin{itemize}
+    %                 \item Fin's drag negligible compared to the AUV drag
+    %                 \item Fin's lift used to control the AUV
+    %                 \item Direct response between the fin's angle and the angular velocity
+    %             \end{itemize}
+    %         \end{block}
+    %         \begin{block}{Angular velocity}
+    %             \begin{equation}
+    %                 \mathbf{\omega_r} = v_r^{\color{red}{2}} \cdot 
+    %                     \underbrace{
+    %                         \left(
+    %                         \begin{smallmatrix}
+    %                             -p_3 & -p_3 & -p_3 \\
+    %                             0 & p_4 \cdot sin(\frac{2\pi}{3}) & -p_4 \cdot sin(\frac{2\pi}{3}) \\
+    %                             p_4 & p_4 \cdot cos(\frac{2\pi}{3}) & p_4 \cdot cos(\frac{2\pi}{3})
+    %                         \end{smallmatrix}
+    %                         \right)
+    %                     }_{\mathbf{B}(p_3, p_4)} \cdot \left(\begin{smallmatrix}u_1\\ u_2\\ u_3\end{smallmatrix}\right)
+    %             \end{equation}
+    %         \end{block}
+    %     \end{minipage}
+    % \end{frame}
 
-                        \filldraw[RoyalBlue] (n1) circle (3pt) node[above] {control};
-                        \filldraw[red] (n2) circle (3pt) node[below] {singularity};
-
-                        \draw[thick,ForestGreen,->,>=latex] (0,0) -- (155:1.5) node[midway,above] {$\mathbf{v_1}$};
-                        \draw[thick,ForestGreen,->,>=latex] (0,0) -- (205:1.5) node[midway,below] {$\mathbf{v_2}$};
-                    \end{tikzpicture}
-                    \caption{Representation in $S^1$}
-                \end{figure}
-            \end{minipage}
-        \end{frame}
-
-        \begin{frame}{2D example}
-            \begin{minipage}{0.4\textwidth}
-                \begin{figure}
-                    \begin{tikzpicture}
-                        \draw (0,-2) --++(90:4cm);
-                        \fill[pattern=north west lines] (0,-2) rectangle ++(-.3,4);
-                        \draw[thick,red,->,>=latex] (0,0) -- (+1,0) node[midway,above] {$\mathbf{u}$};
-
-                        \begin{scope}[xshift=3cm,yshift=.5cm]
-                            \coordinate (c1) at (0,0);
-                            \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
-                        \end{scope}
-                        
-                        \path[draw,thick,RoyalBlue] (n1) arc (245:180:1.2cm) -- ++(0,.15);
-                        \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
-
-                        \begin{scope}[xshift=3cm,yshift=-.5cm]
-                            \coordinate (c2) at (0,0);
-                            \path[rotate=205,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
-                        \end{scope}
-                        \path[draw,thick,RoyalPurple] (n2) arc (115:180:1.2cm) -- ++(0,-.15);
-                        \draw[rotate=205,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
-                    \end{tikzpicture}
-                    \caption{Wall avoidance - Proposed approach}
-                \end{figure}
-            \end{minipage}
-            \hfill
-            \begin{minipage}{0.55\textwidth}
-                \begin{figure}
-                    \begin{tikzpicture}[decoration=triangles]
-
-                        \foreach \n/\a in {n1/0, n2/90, n3/180, n4/270} {
-                            \coordinate (\n) at (\a:1.5cm);
-                        }
-
-                        \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n1.north) arc (0:90:1.5cm);
-                        \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n3.north) arc (180:90:1.5cm);
-                        \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n3.south) arc (180:270:1.5cm);
-                        \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n1.south) arc (360:270:1.5cm);
-
-                        \foreach \n/\c in {n1/red, n2/RoyalBlue, n3/red, n4/RoyalPurple} {
-                            \filldraw[\c] (\n) circle (3pt);
-                        }
-
-                        \filldraw[RoyalBlue] (n2) circle (3pt) node[above] {control};
-                        \filldraw[red] (n1) circle (3pt) node[right] {singularity};
-                        \filldraw[red] (n3) circle (3pt) node[left] {singularity};
-                        \filldraw[RoyalPurple] (n4) circle (3pt) node[below] {control};
-
-                        \draw[thick,ForestGreen,->,>=latex] (0,0) -- (155:1.5) node[midway,above] {$\mathbf{v_1}$};
-                        \draw[thick,ForestGreen,->,>=latex] (0,0) -- (205:1.5) node[midway,below] {$\mathbf{v_2}$};
-                    \end{tikzpicture}
-                    \caption{Representation in $S^1$}
-                \end{figure}
-            \end{minipage}
-        \end{frame}
-
-    \section{Orthogonal constraint}
-    
-        \begin{frame}{Summary of orthogonal constraints}
-            \begin{figure}
-                \begin{subfigure}[t]{0.24\textwidth}
-                    \centering
-                    \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_0_constraints}}
-                    \caption{No constraints}
-                    \label{fig:constraints_0}
-                \end{subfigure}
-                \hfill
-                \begin{subfigure}[t]{0.24\textwidth}
-                    \centering
-                    \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_1_constraints}}
-                    \caption{1 constraint $(i_0 \bot k_1)$}
-                    \label{fig:constraints_1}
-                \end{subfigure}
-                \hfill
-                \begin{subfigure}[t]{0.24\textwidth}
-                    \centering
-                    \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_2_constraints}}
-                    \caption{2 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$}
-                    \label{fig:constraints_2}
-                \end{subfigure}
-                \hfill
-                \begin{subfigure}[t]{0.24\textwidth}
-                    \centering
-                    \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_3_constraints}}
-                    \caption{3 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$, $(j_0 \bot i_1)$}
-                    \label{fig:constraints_3}
-                \end{subfigure}
-                \caption{All combinations of orthogonal constraints in 3 dimensions}
-            \end{figure}
-        \end{frame}
-
-
-
-
-    \section{Control}
-
-        \begin{frame}{Control}
-            \centering
-            \begin{minipage}{0.7\textwidth}
-                \begin{block}{Control inputs}
-                    \centering
-                    Controlled physical quantites are linear acceleration $\mathbf{a_r}$ and angular velocity $\mathbf{\omega_r}$
-                \end{block}
-                \begin{block}{State Equation}
-                    \begin{eqnarray}
-                        \left\{
-                            \begin{array}{rcl}
-                                \dot{\mathbf{p}} & = & \mathbf{R} \cdot \mathbf{v_r} \\
-                                \dot{\mathbf{R}} & = & \mathbf{R} \cdot (\mathbf{\omega_r} \wedge) \\
-                                \dot{\mathbf{v_r}} & = & \mathbf{R}^T \cdot g(\mathbf{p}) + \mathbf{a_r} - \mathbf{\omega_r} \wedge \mathbf{v_r}
-                            \end{array}
-                        \right.
-                    \end{eqnarray}
-                \end{block}
-            \end{minipage}
-        \end{frame}
-
-        \begin{frame}{Control}
-            \centering
-            \begin{minipage}{0.7\textwidth}
-                \begin{figure}
-                    \begin{tikzpicture}
-                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
-                        \draw[thick] (0,0) circle (2cm);
-                        \draw [thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.25] (I) coordinate[pos=0.7] (R2);
-                        \coordinate (R1) at (0,1.2);
-                        \path[thick,ForestGreen,->,>=latex] (R1) edge[bend left] node[pos=0.65,right,ForestGreen] {$\omega_r$} (R2);
-                        \node[ForestGreen] at (R1) {$\bullet$} node[ForestGreen] at (R1) [above] {$\mathbf{R}_u$};
-                        \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R2) [below] {$\mathbf{R}_v$};
-                        \node[red] at (I) {$\bullet$} node[red] at (I) [below] {$\mathbf{I}$};
-                        \draw[dashed] (2,0) arc (0:180:2 and 0.6);
-                    \end{tikzpicture}
-                    \caption{$SO(3)$}
-                \end{figure}
-            \end{minipage}
-        \end{frame}
-
-        \begin{frame}{RotUV}
-            \centering
-            \begin{minipage}{0.3\textwidth}
-                \begin{figure}
-                    \begin{tikzpicture}
-                        \shade[ball color = gray!40, opacity = 0.4] (0,0) circle (2cm);
-                        \draw[thick] (0,0) circle (2cm);
-                        \coordinate (R1) at (0.5,1.2);
-                        \draw [thick] (-2,0) arc (180:360:2 and 0.6) coordinate[pos=0.25] (I) coordinate[pos=0.35] (R2) coordinate[pos=0.7] (R3);
-                        \path[thick,ForestGreen,->,>=latex] (R1) edge[bend left=20] node[pos=0.65,right,ForestGreen] {$\omega_r$} (R3);
-                        \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{u}$} (R1);
-                        \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,above] {$\mathbf{v}$} (R2);
-                        \node[ForestGreen] at (R1) {$\bullet$} node[ForestGreen] at (R1) [above] {$\mathbf{R}_u$};
-                        \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R3) [below] {$\mathbf{R}_u^v \cdot \mathbf{R}_u$};
-                        \node[red] at (I) {$\bullet$} node[red] at (I) [below] {$I$};
-                        \node[ForestGreen] at (R2) {$\bullet$} node[ForestGreen] at (R2) [below] {$\mathbf{R}_v$};
-                        \draw[dashed] (2,0) arc (0:180:2 and 0.6);
-                    \end{tikzpicture}
-                    \caption{$SO(3)$}
-                \end{figure}
-            \end{minipage}
-            \hfill
-            \begin{minipage}{0.55\textwidth}
-                \begin{block}{Vector to vector formulation}
-                    \begin{equation}
-                        \begin{array}{rcl}
-                            \mathbf{K}_u^v & = & vu^T - uv^T \\
-                            \mathbf{R}_u^v & = & \mathbf{I} + \mathbf{K}_u^v + \frac{1}{1 + \langle u, v\rangle} (\mathbf{K}_u^v)^2
-                        \end{array}
-                    \end{equation}
-                \end{block}
-            \end{minipage}
-        \end{frame}
-
-       
-
-    \appendix
-
-    \begin{frame}[standout]
-        Questions?
-    \end{frame}
-
-    \begin{frame}{Torpedo model}
-        \centering
-        \begin{minipage}{0.7\textwidth}
-            \begin{block}{Torpedo assumptions}
-                The following statements are equivalent
-                \begin{itemize}
-                    \item No side slip effect \\
-                    \item No lateral speed
-                    \item Velocity along the $\mathnormal{x}$ axis \\
-                \end{itemize}
-            \end{block}
-            \begin{block}{Torpedo velocity}
-                \begin{equation}
-                    \mathbf{v_r} = (v_r, 0, 0)^T
-                \end{equation}
-            \end{block}
-        \end{minipage}
-    \end{frame}
-
-    \begin{frame}{State Equation}
-        \centering
-        \begin{minipage}{0.7\textwidth}
-            \begin{block}{AUV state}
-                The state of the AUV is denoted by $\mathbf{X} = (\mathbf{p}, \mathbf{v_r}, \mathbf{R})$, where:
-                \begin{itemize}
-                    \item $\mathbf{p}$ is the position of the AUV \\
-                    \item $\mathbf{v_r}$ is the velocity of the AUV in its frame \\
-                    \item $\mathbf{R}$ is the rotation matrix between the world and the AUV \\
-                \end{itemize}
-            \end{block}
-            \begin{block}{State Equation}
-                \begin{eqnarray}
-                    \left\{
-                        \begin{array}{rcl}
-                            \dot{\mathbf{p}} & = & \mathbf{R} \cdot \mathbf{v_r} \\
-                            \dot{\mathbf{R}} & = & \mathbf{R} \cdot (\mathbf{\omega_r} \wedge) \\
-                            \dot{\mathbf{v_r}} & = & \mathbf{R}^T \cdot g(\mathbf{p}) + \mathbf{a_r}
-                        \end{array}
-                    \right.
-                \end{eqnarray}
-            \end{block}
-        \end{minipage}
-    \end{frame}
-
-    \begin{frame}{Inputs}
-        \centering
-        \begin{minipage}{0.7\textwidth}
-            \begin{block}{Inputs}
-                \centering
-                Input vector of the system is $\mathbf{u} = (u_0, u_1, u_2, u_3)^T$, where:
-                \begin{itemize}
-                    \item $u_0$: thruster velocity \\
-                    \item $u_1, u_2, u_3$: fin angles
-                \end{itemize}
-            \end{block}
-        \end{minipage}
-    \end{frame}
-
-    \begin{frame}{Linear acceleration}
-        \centering
-        \begin{minipage}{0.7\textwidth}
-            \begin{block}{Assumptions}
-                \vspace{0.2cm}
-                \begin{itemize}
-                    \item Quadratic thrust with velocity
-                    \item Quadratic drag with velocity
-                \end{itemize}
-            \end{block}
-            \begin{block}{Linear acceleration}
-                \begin{equation}
-                    \mathbf{a_r} = \underbrace{p_1 \cdot \left(\begin{smallmatrix}u_0 \\ 0 \\ 0 \end{smallmatrix}\right)^2}_{thrust} - \underbrace{p_2 \cdot \mathbf{v_r} \cdot |\mathbf{v_r}|}_{drag}
-                \end{equation}
-            \end{block}
-        \end{minipage}
-    \end{frame}
-
-    \begin{frame}{Angular velocity}
-        \centering
-        \begin{minipage}{0.8\textwidth}
-            \begin{block}{Assumptions}
-                \vspace{0.2cm}
-                \begin{itemize}
-                    \item Fin's drag negligible compared to the AUV drag
-                    \item Fin's lift used to control the AUV
-                    \item Direct response between the fin's angle and the angular velocity
-                \end{itemize}
-            \end{block}
-            \begin{block}{Angular velocity}
-                \begin{equation}
-                    \mathbf{\omega_r} = v_r^{\color{red}{2}} \cdot 
-                        \underbrace{
-                            \left(
-                            \begin{smallmatrix}
-                                -p_3 & -p_3 & -p_3 \\
-                                0 & p_4 \cdot sin(\frac{2\pi}{3}) & -p_4 \cdot sin(\frac{2\pi}{3}) \\
-                                p_4 & p_4 \cdot cos(\frac{2\pi}{3}) & p_4 \cdot cos(\frac{2\pi}{3})
-                            \end{smallmatrix}
-                            \right)
-                        }_{\mathbf{B}(p_3, p_4)} \cdot \left(\begin{smallmatrix}u_1\\ u_2\\ u_3\end{smallmatrix}\right)
-                \end{equation}
-            \end{block}
-        \end{minipage}
-    \end{frame}
-
-    \begin{frame}{Repartition matrix}
-        \centering
-        \begin{minipage}{0.8\textwidth}
-            \begin{block}{Fin's lift}
-                $\forall i \in \{0, 1, 2\}:$
-                \begin{itemize}
-                    \item Force $\mathbf{f_i} = \alpha \cdot u_i \cdot v^2 \cdot (0, 1, 0)^T$
-                    \item Orientation $\mathbf{R_i} = \mathbf{R_x}\left(\frac{2i\pi}{3}\right)$
-                    \item Center of pressure $\mathbf{q_i} = (\mathit{l_x}, 0, \mathit{l_z})^T$
-                    \item Torque $\mathbf{\tau_i} = \mathbf{R_i} \cdot \mathbf{q} \wedge \mathbf{f_i}$
-                \end{itemize}
-            \end{block}
-            \begin{block}{Angular velocity}
-                \begin{equation}
-                    \mathbf{\omega_r} = v_r^2 \cdot 
-                        \underbrace{
-                            \left(
-                            \begin{smallmatrix}
-                                -p_3 & -p_3 & -p_3 \\
-                                0 & p_4 \cdot sin(\frac{2\pi}{3}) & -p_4 \cdot sin(\frac{2\pi}{3}) \\
-                                p_4 & p_4 \cdot cos(\frac{2\pi}{3}) & p_4 \cdot cos(\frac{2\pi}{3})
-                            \end{smallmatrix}
-                            \right)
-                        }_{\mathbf{B}(p_3, p_4)} \cdot \left(\begin{smallmatrix}u_1\\ u_2\\ u_3\end{smallmatrix}\right)
-                \end{equation}
-            \end{block}
-        \end{minipage}
-    \end{frame}
+    % \begin{frame}{Repartition matrix}
+    %     \centering
+    %     \begin{minipage}{0.8\textwidth}
+    %         \begin{block}{Fin's lift}
+    %             $\forall i \in \{0, 1, 2\}:$
+    %             \begin{itemize}
+    %                 \item Force $\mathbf{f_i} = \alpha \cdot u_i \cdot v^2 \cdot (0, 1, 0)^T$
+    %                 \item Orientation $\mathbf{R_i} = \mathbf{R_x}\left(\frac{2i\pi}{3}\right)$
+    %                 \item Center of pressure $\mathbf{q_i} = (\mathit{l_x}, 0, \mathit{l_z})^T$
+    %                 \item Torque $\mathbf{\tau_i} = \mathbf{R_i} \cdot \mathbf{q} \wedge \mathbf{f_i}$
+    %             \end{itemize}
+    %         \end{block}
+    %         \begin{block}{Angular velocity}
+    %             \begin{equation}
+    %                 \mathbf{\omega_r} = v_r^2 \cdot 
+    %                     \underbrace{
+    %                         \left(
+    %                         \begin{smallmatrix}
+    %                             -p_3 & -p_3 & -p_3 \\
+    %                             0 & p_4 \cdot sin(\frac{2\pi}{3}) & -p_4 \cdot sin(\frac{2\pi}{3}) \\
+    %                             p_4 & p_4 \cdot cos(\frac{2\pi}{3}) & p_4 \cdot cos(\frac{2\pi}{3})
+    %                         \end{smallmatrix}
+    %                         \right)
+    %                     }_{\mathbf{B}(p_3, p_4)} \cdot \left(\begin{smallmatrix}u_1\\ u_2\\ u_3\end{smallmatrix}\right)
+    %             \end{equation}
+    %         \end{block}
+    %     \end{minipage}
+    % \end{frame}
     
 \end{document}
