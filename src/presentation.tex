@@ -515,7 +515,7 @@
             \hfill
             \begin{minipage}{0.55\textwidth}
                 \begin{block}{Limitation}
-                    If $\mathbf{u} = \mathbf{v}$, $\mathbf{v_\bot}$ is undefined
+                    Physical singularity when $\mathbf{\color{red}{u}} = \mathbf{\color{ForestGreen}{v}}$, as $\mathbf{\color{RoyalBlue}{v_\bot}}$ is undefined
                 \end{block}
             \end{minipage}
         \end{frame}
@@ -727,22 +727,21 @@
                         \onslide<2-> {
                             \draw[thick,red,->,>=latex] (0,0) -- +(35:1cm) node[midway,xshift=-.2cm,yshift=.25cm] {$\mathbf{u}$};
                         }
-                        
                         \onslide<3-> {
-                            \begin{scope}[xshift=2cm,yshift=-.5cm]
-                                \coordinate (c1) at (0,0);
-                                \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
-                                \path[rotate=155, draw,thick,RoyalBlue] (n1) arc (90:-25:1.2cm) -- ++(-115:0);
-                                \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
-                            \end{scope}
-                        }
-                        
-                        \onslide<4-> {
                             \begin{scope}[xshift=-2cm,yshift=.5cm]
                                 \coordinate (c2) at (0,0);
                                 \path[rotate=-25,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
                                 \path[rotate=-25,draw,thick,RoyalBlue] (n2) arc (-90:-30:1.2cm) -- ++(60:2);
-                                \draw[rotate=-25,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
+                                \draw[rotate=-25,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
+                            \end{scope}
+                        }
+
+                        \onslide<4-> {
+                            \begin{scope}[xshift=2cm,yshift=-.5cm]
+                                \coordinate (c1) at (0,0);
+                                \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
+                                \path[rotate=155, draw,thick,RoyalBlue] (n1) arc (90:-25:1.2cm) -- ++(-115:0);
+                                \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
                             \end{scope}
                         }
                     \end{tikzpicture}
@@ -765,11 +764,11 @@
                         }
 
                         \onslide<3-> {
-                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (270:90:1.5cm);
-                        }
-                            
-                        \onslide<4-> {
                             \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (-90:90:1.5cm);
+                        }
+
+                        \onslide<4-> {
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (270:90:1.5cm);
                         }
                         
                         \onslide<2-> {
@@ -778,11 +777,11 @@
                         }
 
                         \onslide<3-> {
-                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (210:1.5) node[midway,above] {$\mathbf{v_1}$};
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (40:1.5) node[midway,below] {$\mathbf{v_1}$};
                         }
 
                         \onslide<4-> {
-                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (40:1.5) node[midway,below] {$\mathbf{v_2}$};
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (210:1.5) node[midway,above] {$\mathbf{v_2}$};
                         }
 
                         \filldraw (0,0) circle (1pt);
