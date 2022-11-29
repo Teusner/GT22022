@@ -888,33 +888,116 @@
         \end{frame}
 
     \section{Orthogonal constraint}
+
+        \begin{frame}{1 Constraint}
+            \begin{minipage}{.6\textwidth}
+                \begin{figure}
+                    \centering
+                    \href{run:1_constraint.mp4?autostart&loop}{\includegraphics[width=\textwidth]{build/imgs/videos/1_constraint}}
+                    \caption{1 orthogonal constraint}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{.38\textwidth}
+                \begin{block}{Simulation}
+                    \vspace*{.25cm}
+                    \begin{itemize}
+                        \item 1 constraint $\mathbf{\color{ForestGreen}{v}} \bot \mathbf{\color{red}{u}}$
+                        \item $\mathbf{\color{red}{u}} = AxisRot(\frac{\pi}{8}, \mathbf{z})$
+                        \item $\mathbf{\color{ForestGreen}{v}} = (1,0,0)^T$
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{1 Constraint - $w$ injection}
+            \begin{minipage}{.6\textwidth}
+                \begin{figure}
+                    \centering
+                    \href{run:1_constraint_injection_w_2_side.mp4?autostart&loop}{\includegraphics[width=\textwidth]{build/imgs/videos/1_constraint_injection_w_2_side}}
+                    \caption{1 orthogonal constraint with $w$ injection}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{.38\textwidth}
+                \begin{block}{Simulation}
+                    \vspace*{.25cm}
+                    \begin{itemize}
+                        \item 1 constraint $\mathbf{\color{ForestGreen}{v}} \bot \mathbf{\color{red}{u}}$
+                        \item $\mathbf{\color{red}{u}} = random$
+                        \item $\mathbf{\color{ForestGreen}{v}} = (1,0,0)^T$
+                    \end{itemize}
+                \end{block}
+                \begin{block}{$w$ injection}
+                    \begin{itemize}
+                        \item Injection $w$
+                        \item $w = (w_x, 0, 0)$
+                        \item $w_x$ changing every 2 seconds
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{Plane following - $w$ injection}
+            \begin{minipage}{.6\textwidth}
+                \begin{figure}
+                    \centering
+                    \href{run:1_constraint_plane_injection_w.mp4?autostart&loop}{\includegraphics[width=\textwidth]{build/imgs/videos/1_constraint_plane_injection_w}}
+                    \caption{Plane following with $w$ injection}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{.38\textwidth}
+                \begin{block}{Simulation}
+                    \vspace*{.25cm}
+                    \begin{itemize}
+                        \item 1 constraint $\mathbf{\color{ForestGreen}{v}} \bot \mathbf{\color{red}{u}}$
+                        \item $\mathbf{\color{red}{u}} = AxisRot(\frac{\pi}{8}, \mathbf{y})$
+                        \item $\mathbf{\color{ForestGreen}{v}} = (1,0,0)^T$
+                    \end{itemize}
+                \end{block}
+                \begin{block}{Simulation}
+                    \begin{itemize}
+                        \item 1 constraint $\mathbf{\color{ForestGreen}{v}} \bot \mathbf{\color{red}{u}}$
+                        \item $\mathbf{\color{red}{u}} = (0, 0, 1)_w^T$
+                        \item $\mathbf{\color{ForestGreen}{v}} = (1,0,0)^T$
+                    \end{itemize}
+                \end{block}
+                \begin{block}{$w$ injection}
+                    \begin{itemize}
+                        \item Injection $w$
+                        \item $w = (w_x, 0, 0)$
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
     
         \begin{frame}{Summary of orthogonal constraints}
             \begin{figure}
                 \begin{subfigure}[t]{0.24\textwidth}
                     \centering
-                    \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_0_constraints}}
+                    \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_0_constraints}}
                     \caption{No constraints}
                     \label{fig:constraints_0}
                 \end{subfigure}
                 \hfill
                 \begin{subfigure}[t]{0.24\textwidth}
                     \centering
-                    \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_1_constraints}}
+                    \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_1_constraints}}
                     \caption{1 constraint $(i_0 \bot k_1)$}
                     \label{fig:constraints_1}
                 \end{subfigure}
                 \hfill
                 \begin{subfigure}[t]{0.24\textwidth}
                     \centering
-                    \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_2_constraints}}
+                    \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_2_constraints}}
                     \caption{2 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$}
                     \label{fig:constraints_2}
                 \end{subfigure}
                 \hfill
                 \begin{subfigure}[t]{0.24\textwidth}
                     \centering
-                    \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/frame_3_constraints}}
+                    \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_3_constraints}}
                     \caption{3 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$, $(j_0 \bot i_1)$}
                     \label{fig:constraints_3}
                 \end{subfigure}

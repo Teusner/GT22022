@@ -29,7 +29,7 @@ $(ABSTRACT_BUILD_DIR)/abstract.pdf: src/abstract.tex
 	$(dir_guard)
 	latexmk -pdf -shell-escape -output-directory=$(ABSTRACT_BUILD_DIR) $<
 
-presentation: $(PRESENTATION_BUILD_DIR)/presentation.pdf manim
+presentation: $(PRESENTATION_BUILD_DIR)/presentation.pdf manim videos
 
 $(PRESENTATION_BUILD_DIR)/presentation.pdf: src/presentation.tex
 	$(dir_guard)
@@ -38,16 +38,31 @@ $(PRESENTATION_BUILD_DIR)/presentation.pdf: src/presentation.tex
 # Manim
 MANIM_SOURCES := $(filter-out scripts/frame.py, $(wildcard scripts/*.py))
 MANIM_ANIMATIONS = $(MANIM_SOURCES:scripts/%.py=%.mp4)
-manim: $(addprefix $(PRESENTATION_BUILD_DIR)/, ${MANIM_ANIMATIONS})
+MANIM_THUMBNAILS = $(MANIM_SOURCES:scripts/%.py=%.png)
+manim: $(addprefix $(PRESENTATION_BUILD_DIR)/, ${MANIM_ANIMATIONS}) $(addprefix $(IMGS_BUILD_DIR)/manim/, ${MANIM_THUMBNAILS})
 
 $(PRESENTATION_BUILD_DIR)/%.mp4 : scripts/%.py
 	$(dir_guard)
 	manim -qh -r 1024,1024 $< $*
 	cp -f build/manim/videos/$*/1024p60/$*.mp4 $@
 
-$(IMGS_BUILD_DIR)/%.png : $(PRESENTATION_BUILD_DIR)/%.mp4
+$(IMGS_BUILD_DIR)/manim/%.png : $(PRESENTATION_BUILD_DIR)/%.mp4
 	$(dir_guard)
 	ffmpeg -i $< -ss 00:00:09.000 -vframes 1 $@
+
+# Videos
+VIDEOS_SOURCES = $(wildcard videos/*.mp4)
+VIDEOS_NAMES = $(VIDEOS_SOURCES:videos/%.mp4=%.mp4)
+VIDEOS_THUMBNAIL = $(VIDEOS_SOURCES:videos/%.mp4=%.png)
+videos: $(addprefix $(PRESENTATION_BUILD_DIR)/, ${VIDEOS_NAMES}) $(addprefix $(IMGS_BUILD_DIR)/videos/, ${VIDEOS_THUMBNAIL})
+
+$(PRESENTATION_BUILD_DIR)/%.mp4 : videos/%.mp4
+	$(dir_guard)
+	ln $< $@
+
+$(IMGS_BUILD_DIR)/videos/%.png : videos/%.mp4
+	$(dir_guard)
+	ffmpeg -i $< -ss 00:00:05.000 -vframes 1 $@
 
 # Clean recipe
 clean:
