@@ -62,7 +62,7 @@
 
 \addtobeamertemplate{frametitle}{}{%
     \begin{tikzpicture}[remember picture,overlay]
-    \node[anchor=north east,yshift=2pt] at (current page.north east) {\includegraphics[height=0.9cm]{imgs/logo_ensta_bw}};
+    \node[anchor=north east,yshift=2pt] at (current page.north east) {\includegraphics[height=0.85cm]{imgs/logo_ensta_aid}};
     \end{tikzpicture}
 }
 
@@ -296,7 +296,7 @@
         \begin{frame}{Comparing approaches}
             \begin{minipage}[t]{0.45\textwidth}
                 \centering
-                \textbf{\large Classical control}
+                \textbf{\large Classical control\footnote[frame]{\textcite{jaulin2019mobile}}}
                 \begin{block}{Strengths}
                     % \vspace{0.2cm}
                     \begin{itemize}
@@ -410,7 +410,7 @@
             \end{minipage}
             \hfill
             \begin{minipage}{0.55\textwidth}
-                \begin{block}{Determine $R_w$}
+                \begin{block}{Determine $\mathbf{R_w}$}
                     \begin{equation}
                         \begin{split}
                             \mathbf{\color{RoyalPurple}{w}} &= \mathbf{\color{ForestGreen}{v}} \wedge \mathbf{\color{RoyalBlue}{v_\bot}} \\
@@ -471,7 +471,7 @@
             \end{minipage}
             \hfill
             \begin{minipage}{0.55\textwidth}
-                \begin{block}{Codesido formula \footcite{Codesido}}
+                \begin{block}{Codesido formula\footnote[frame]{\textcite{codesido}}}
                     \begin{equation}
                         \begin{array}{rcl}
                             \mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}} & = & \mathbf{\color{RoyalBlue}{v_\bot}} \mathbf{\color{ForestGreen}{v}}^T - \mathbf{\color{ForestGreen}{v}}\mathbf{\color{RoyalBlue}{v_\bot}}^T \\
@@ -479,11 +479,6 @@
                         \end{array}
                     \end{equation}
                 \end{block}
-                % \begin{block}<2->{Angular velocity w}
-                %     \begin{equation}
-                %         \mathbf{\color{RoyalPurple}{w}} = \frac{1}{t} Log(\mathbf{R}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}})
-                %     \end{equation}
-                % \end{block}
                 \begin{block}<2->{No singularities}
                     \vspace{.2cm}
                     \begin{itemize}
@@ -692,7 +687,7 @@
 
                     \node[block,circle,align=center] (n1) {Orthogonal\\controller};
                     \node[block,circle,right=of n1] (n2) {Controller};
-                    \node[block,rectangle,right=of n2] (n3) {AUV};
+                    \node[block,rectangle,right=of n2] (n3) {AUV\footnote{\textcite{fossen2011handbook}}};
 
                     \draw[thick,->,>=latex,RoyalBlue] (n1) to node[midway,above] {$\mathbf{w}$} (n2);
                     
@@ -745,7 +740,7 @@
 
                     \node[block,circle,align=center] (n1) {Orthogonal\\controller};
                     \node[block,circle,right=of n1] (n2) {Controller};
-                    \node[block,rectangle,right=of n2] (n3) {AUV};
+                    \node[block,rectangle,right=of n2] (n3) {AUV\footnote{\textcite{fossen2011handbook}}};
                     
                     \node[RoyalBlue] (wa) at ($(n1)!.5!(n2)+(0,1)$) {$\mathbf{w_a}$};
                     \draw[thick,RoyalBlue,->,>=latex] (wa) |- (n2.west);
@@ -849,6 +844,16 @@
     \begin{frame}[standout]
         Questions?
     \end{frame}
+
+    \begin{frame}[allowframebreaks]{References}
+
+        \settoggle{bbx:url}{false}
+        \settoggle{bbx:doi}{false}
+        \settoggle{bbx:eprint}{false}
+        \settoggle{bbx:isbn}{false}
+        \printbibliography[sorting=nyt]
+
+      \end{frame}
 
     % \begin{frame}{2D Pipe following - Classical control}
         %     \begin{minipage}{0.4\textwidth}
