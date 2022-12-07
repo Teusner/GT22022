@@ -29,7 +29,7 @@ $(ABSTRACT_BUILD_DIR)/abstract.pdf: src/abstract.tex
 	$(dir_guard)
 	latexmk -pdf -shell-escape -output-directory=$(ABSTRACT_BUILD_DIR) $<
 
-presentation: $(PRESENTATION_BUILD_DIR)/presentation.pdf manim videos
+presentation: manim videos $(PRESENTATION_BUILD_DIR)/presentation.pdf
 
 $(PRESENTATION_BUILD_DIR)/presentation.pdf: src/presentation.tex
 	$(dir_guard)
