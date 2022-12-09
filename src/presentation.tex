@@ -44,7 +44,7 @@
 % Block fill
 \metroset{block=fill}
 
-\title{Torpedo-like AUV control in constrained environment}
+\title{Orthogonal control of Torpedo-like AUV in constrained environment}
 \date{\today}
 \author{Quentin Brateau}
 \institute{ENSTA Bretagne}
@@ -388,7 +388,7 @@
             \end{minipage}
         \end{frame}
 
-        \begin{frame}{Determine $\mathbf{R_w}$ - Classical way}
+        \begin{frame}{Determine $\mathbf{\omega}$ - Classical way}
             \begin{minipage}{0.4\textwidth}
                 \centering
                 \begin{figure}
@@ -419,19 +419,11 @@
             \end{minipage}
             \hfill
             \begin{minipage}{0.55\textwidth}
-                \begin{block}{Determine $\mathbf{R_w}$}
+                \begin{block}{Determine $\mathbf{\omega}$}
                     \begin{equation}
                         \begin{split}
                             \mathbf{\color{RoyalPurple}{w}} &= \mathbf{\color{ForestGreen}{v}} \wedge \mathbf{\color{RoyalBlue}{v_\bot}} \\
-                            \color{RoyalPurple}{\alpha} &= arccos(\mathbf{||\color{RoyalPurple}{w}}||) \\
-                            \mathbf{R_{\color{RoyalPurple}{w}}} &= exp\left(
-                                {\color{RoyalPurple}{\alpha}}
-                                \frac{
-                                    \mathbf{\color{RoyalPurple}{w}}
-                                }{
-                                    \color<2>{red}{||\mathbf{\color<1>{RoyalPurple}{w}}}||
-                                }
-                                t\right)
+                            \mathbf{\omega} &= \frac{arcsin(||{\color{RoyalPurple}{\mathbf{w}}}||)}{\color<2>{red}{||\mathbf{\color<1>{RoyalPurple}{w}}}||} \cdot \color{RoyalPurple}{\mathbf{w}} \\
                         \end{split}
                     \end{equation}
                 \end{block}
@@ -444,7 +436,7 @@
             \end{minipage}
         \end{frame}
 
-        \begin{frame}{Determine $\mathbf{R_w}$ - Codesido flavor}
+        \begin{frame}{Determine $\mathbf{\omega}$ - Codesido flavor}
             \begin{minipage}{0.4\textwidth}
                 \centering
                 \begin{figure}
@@ -463,8 +455,9 @@
                             \coordinate (R2) at (-0.2,1.15);
                             \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{v}$} (R2); 
                             \draw[thick,dotted] (R1) edge[in=30,out=175] (R2);
-                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
-                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{w}$} (R4);
+                            \draw[thick,dotted] (R2) edge[in=70,out=210] (R3);
+                            % \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
+                            % \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{w}$} (R4);
                         }
 
                         \onslide<2>{
@@ -491,7 +484,7 @@
                 \begin{block}<2->{No singularities}
                     \vspace{.2cm}
                     \begin{itemize}
-                        \item If $\mathbf{\color{ForestGreen}{v}} = \mathbf{\color{RoyalBlue}{v_\bot}}$, $\mathbf{R_{{\color{ForestGreen}{v}}}^{{\color{RoyalBlue}{v_\bot}}}} = \mathbf{I_3}$ 
+                        \item If $\mathbf{\color{ForestGreen}{v}} = \mathbf{\color{RoyalBlue}{v_\bot}}$, $\mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}}=\mathbf{O_3}$ and $\mathbf{R_{{\color{ForestGreen}{v}}}^{{\color{RoyalBlue}{v_\bot}}}} = \mathbf{I_3}$ 
                         \item<3> Singularity when $\langle\mathbf{\color{ForestGreen}{v}}, \mathbf{\color{RoyalBlue}{v_\bot}}\rangle = -1$
                     \end{itemize}
                 \end{block}
@@ -1106,7 +1099,6 @@
             \end{figure}
         \end{frame}
         
-
     \section{Conclusion}
 
         \begin{frame}{Conclusion}
