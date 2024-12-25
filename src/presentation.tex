@@ -44,7 +44,7 @@
 % Block fill
 \metroset{block=fill}
 
-\title{Torpedo-like AUV control in constrained environment}
+\title{Orthogonal control of Torpedo-like AUV in constrained environment}
 \date{\today}
 \author{Quentin Brateau}
 \institute{ENSTA Bretagne}
@@ -388,7 +388,7 @@
             \end{minipage}
         \end{frame}
 
-        \begin{frame}{Determine $\mathbf{R_w}$ - Classical way}
+        \begin{frame}{Determine $\mathbf{\omega}$ - Classical way}
             \begin{minipage}{0.4\textwidth}
                 \centering
                 \begin{figure}
@@ -419,19 +419,11 @@
             \end{minipage}
             \hfill
             \begin{minipage}{0.55\textwidth}
-                \begin{block}{Determine $\mathbf{R_w}$}
+                \begin{block}{Determine $\mathbf{\omega}$}
                     \begin{equation}
                         \begin{split}
                             \mathbf{\color{RoyalPurple}{w}} &= \mathbf{\color{ForestGreen}{v}} \wedge \mathbf{\color{RoyalBlue}{v_\bot}} \\
-                            \color{RoyalPurple}{\alpha} &= arccos(\mathbf{||\color{RoyalPurple}{w}}||) \\
-                            \mathbf{R_{\color{RoyalPurple}{w}}} &= exp\left(
-                                {\color{RoyalPurple}{\alpha}}
-                                \frac{
-                                    \mathbf{\color{RoyalPurple}{w}}
-                                }{
-                                    \color<2>{red}{||\mathbf{\color<1>{RoyalPurple}{w}}}||
-                                }
-                                t\right)
+                            \mathbf{\omega} &= \frac{arcsin(||{\color{RoyalPurple}{\mathbf{w}}}||)}{\color<2>{red}{||\mathbf{\color<1>{RoyalPurple}{w}}}||} \cdot \color{RoyalPurple}{\mathbf{w}} \\
                         \end{split}
                     \end{equation}
                 \end{block}
@@ -444,7 +436,7 @@
             \end{minipage}
         \end{frame}
 
-        \begin{frame}{Determine $\mathbf{R_w}$ - Codesido flavor}
+        \begin{frame}{Determine $\mathbf{\omega}$ - Codesido flavor}
             \begin{minipage}{0.4\textwidth}
                 \centering
                 \begin{figure}
@@ -463,8 +455,9 @@
                             \coordinate (R2) at (-0.2,1.15);
                             \draw[thick,ForestGreen,->,>=latex] (0,0) -- node[midway,above left] {$\mathbf{v}$} (R2); 
                             \draw[thick,dotted] (R1) edge[in=30,out=175] (R2);
-                            \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
-                            \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{w}$} (R4);
+                            \draw[thick,dotted] (R2) edge[in=70,out=210] (R3);
+                            % \path[thick,->,>=latex,RoyalPurple] (R2) edge[in=70,out=210] (R3);
+                            % \draw[thick,RoyalPurple,->,>=latex] (0,0) -- node[midway,right] {$\mathbf{w}$} (R4);
                         }
 
                         \onslide<2>{
@@ -491,7 +484,7 @@
                 \begin{block}<2->{No singularities}
                     \vspace{.2cm}
                     \begin{itemize}
-                        \item If $\mathbf{\color{ForestGreen}{v}} = \mathbf{\color{RoyalBlue}{v_\bot}}$, $\mathbf{R_{{\color{ForestGreen}{v}}}^{{\color{RoyalBlue}{v_\bot}}}} = \mathbf{I_3}$ 
+                        \item If $\mathbf{\color{ForestGreen}{v}} = \mathbf{\color{RoyalBlue}{v_\bot}}$, $\mathbf{K}_{\mathbf{\color{ForestGreen}{v}}}^{\mathbf{\color{RoyalBlue}{v_\bot}}}=\mathbf{O_3}$ and $\mathbf{R_{{\color{ForestGreen}{v}}}^{{\color{RoyalBlue}{v_\bot}}}} = \mathbf{I_3}$ 
                         \item<3> Singularity when $\langle\mathbf{\color{ForestGreen}{v}}, \mathbf{\color{RoyalBlue}{v_\bot}}\rangle = -1$
                     \end{itemize}
                 \end{block}
@@ -657,6 +650,176 @@
             \end{minipage}
         \end{frame}
 
+        \begin{frame}{2D Pipe following - Classical control}
+            \begin{minipage}{0.4\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \begin{scope}[rotate=35]
+                            \def\r{.2};
+                            \def\h{4};
+                            \draw[fill=gray!60]  (-\h/2,\r) to[out=0,in=60]  (-\h/2,0) to[out=120,in=180] cycle;
+                            \draw[fill=gray!30] (-\h/2,\r) to[out=0,in=60] (-\h/2,0) to[out=-120,in=180] (-\h/2,-\r) -- (\h/2,-\r) to[out=180,in=-120] (\h/2,0) to[out=60,in=0] (\h/2,\r) -- cycle;
+                            \draw[fill=gray!60]  (\h/2,-\r) to[out=180,in=-120]  (\h/2,0) to[out=-60,in=0] cycle;
+                        \end{scope}
+
+                        \onslide<2-> {
+                            \draw[thick,red,->,>=latex] (0,0) -- +(35:1cm) node[midway,xshift=-.2cm,yshift=.25cm] {$\mathbf{u}$};
+                        }
+                        \onslide<3-> {
+                            \begin{scope}[xshift=-2cm,yshift=.5cm]
+                                \coordinate (c2) at (0,0);
+                                \path[rotate=-25,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
+                                \path[rotate=-25,draw,thick,RoyalBlue] (n2) arc (-90:-30:1.2cm) -- ++(60:2);
+                                \draw[rotate=-25,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
+                            \end{scope}
+                        }
+
+                        \onslide<4-> {
+                            \begin{scope}[xshift=2cm,yshift=-.5cm]
+                                \coordinate (c1) at (0,0);
+                                \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
+                                \path[rotate=155, draw,thick,RoyalBlue] (n1) arc (90:-25:1.2cm) -- ++(-115:0);
+                                \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
+                            \end{scope}
+                        }
+                    \end{tikzpicture}
+                    \caption{Pipe following - Classical control}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}[decoration=triangles,rotate=-65]
+                        \foreach \n/\a in {n1/90, n2/270} {
+                            \coordinate (\n) at (\a:1.5cm);
+                        }
+                        \path[draw] (n2) arc (-90:90:1.5cm);
+                        \path[draw] (n2) arc (270:90:1.5cm);
+
+                        \onslide<2-> {
+                            \path[draw,thick,RoyalBlue] (n2) arc (-90:90:1.5cm);
+                            \path[draw,thick,RoyalBlue] (n2) arc (270:90:1.5cm);
+                        }
+
+                        \onslide<3-> {
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (-90:90:1.5cm);
+                        }
+
+                        \onslide<4-> {
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (270:90:1.5cm);
+                        }
+                        
+                        \onslide<2-> {
+                            \filldraw[RoyalBlue] (n1) circle (3pt) node[yshift=.3cm,right] {control};
+                            \filldraw[red] (n2) circle (3pt) node[yshift=-.3cm,left] {singularity};
+                        }
+
+                        \onslide<3-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (40:1.5) node[midway,below] {$\mathbf{v_1}$};
+                        }
+
+                        \onslide<4-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (220:1.5) node[midway,above] {$\mathbf{v_2}$};
+                        }
+
+                        \filldraw (0,0) circle (1pt);
+                    \end{tikzpicture}
+                    \caption{Representation in $S^1$}
+                \end{figure}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{2D Pipe following - Orthogonal control}
+            \begin{minipage}{0.4\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}
+                        \begin{scope}[rotate=35]
+                            \def\r{.2};
+                            \def\h{4};
+                            \draw[fill=gray!60]  (-\h/2,\r) to[out=0,in=60]  (-\h/2,0) to[out=120,in=180] cycle;
+                            \draw[fill=gray!30] (-\h/2,\r) to[out=0,in=60] (-\h/2,0) to[out=-120,in=180] (-\h/2,-\r) -- (\h/2,-\r) to[out=180,in=-120] (\h/2,0) to[out=60,in=0] (\h/2,\r) -- cycle;
+                            \draw[fill=gray!60]  (\h/2,-\r) to[out=180,in=-120]  (\h/2,0) to[out=-60,in=0] cycle;
+                        \end{scope}
+
+                        \onslide<2-> {
+                            \draw[thick,red,->,>=latex] (0,0) -- +(125:1cm) node[midway,xshift=.1cm,yshift=.35cm] {$\mathbf{u}$};
+                        }
+
+                        \onslide<3-> {
+                            \begin{scope}[xshift=-2cm,yshift=.5cm]
+                                \coordinate (c2) at (0,0);
+                                \path[rotate=-25,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
+                                \path[rotate=-25,draw,thick,RoyalBlue] (n2) arc (-90:-30:1.2cm) -- ++(60:2);
+                                \draw[rotate=-25,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
+                            \end{scope}
+                        }
+                        
+                        \onslide<4-> {
+                            \begin{scope}[xshift=2cm,yshift=-.5cm]
+                                \coordinate (c1) at (0,0);
+                                \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
+                                \path[rotate=155, draw,thick,RoyalPurple] (n1) arc (-90:-30:1.2cm) -- ++(60:2);
+                                \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
+                            \end{scope}
+                        }
+                    \end{tikzpicture}
+                    \caption{Pipe following - Orthogonal control}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.55\textwidth}
+                \begin{figure}
+                    \begin{tikzpicture}[decoration=triangles,rotate=-35]
+                        \foreach \n/\a in {n1/0, n2/90, n3/180, n4/270} {
+                            \coordinate (\n) at (\a:1.5cm);
+                        }
+                        \path[draw] (n1.north) arc (0:90:1.5cm);
+                        \path[draw] (n3.north) arc (180:90:1.5cm);
+                        \path[draw] (n3.south) arc (180:270:1.5cm);
+                        \path[draw] (n1.south) arc (360:270:1.5cm);
+
+                        \onslide<2-> {
+                            \path[draw,thick,RoyalBlue] (n1.north) arc (0:90:1.5cm);
+                            \path[draw,thick,RoyalBlue] (n3.north) arc (180:90:1.5cm);
+                            \path[draw,thick,RoyalPurple] (n3.south) arc (180:270:1.5cm);
+                            \path[draw,thick,RoyalPurple] (n1.south) arc (360:270:1.5cm);
+                        }
+                        
+                        \onslide<3-> {
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n1.north) arc (0:90:1.5cm);
+                            \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n3.north) arc (180:90:1.5cm);
+                        }
+
+                        \onslide<4-> {
+                            \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n3.south) arc (180:270:1.5cm);
+                            \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n1.south) arc (360:270:1.5cm);
+                        }
+
+                        \onslide<2-> {
+                            \foreach \n/\c in {n1/red, n2/RoyalBlue, n3/red, n4/RoyalPurple} {
+                                \filldraw[\c] (\n) circle (3pt);
+                            }
+                            \filldraw[RoyalBlue] (n2) circle (3pt) node[yshift=.3cm,right] {control};
+                            \filldraw[red] (n1) circle (3pt) node[right,xshift=.1cm] {singularity};
+                            \filldraw[red] (n3) circle (3pt) node[left,xshift=-.1cm] {singularity};
+                            \filldraw[RoyalPurple] (n4) circle (3pt) node[yshift=-.3cm,left] {control};
+                        }
+
+                        \onslide<3-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (10:1.5) node[midway,below] {$\mathbf{v_1}$};
+                        }
+
+                        \onslide<4-> {
+                            \draw[thick,ForestGreen,->,>=latex] (0,0) -- (190:1.5) node[midway,above] {$\mathbf{v_2}$};
+                        }
+
+                        \filldraw (0,0) circle (1pt);
+                    \end{tikzpicture}
+                    \caption{Representation in $S^1$}
+                \end{figure}
+            \end{minipage}
+        \end{frame}
+
     \section{AUV application}
 
         \begin{frame}{Controller block diagram}
@@ -799,6 +962,143 @@
             \end{minipage}
         \end{frame}
 
+    \section{Composed orthogonal constraints}
+
+        \begin{frame}{0 orthogonal constraint}
+            \begin{minipage}{0.33\textwidth}
+                \begin{figure}
+                    \centering
+                    \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_0_constraints}}
+                    \caption{1 Orthogonal constraint}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.6\textwidth}
+                \begin{block}{0 orthogonal constraint}
+                    \vspace*{.25cm}
+                    \begin{itemize}
+                        \item 0 constraint
+                        \item 3 degrees of freedom
+                    \end{itemize}
+                \end{block}
+                \begin{block}{Application}
+                    \begin{itemize}
+                        \item Free navigation
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{1 orthogonal constraint}
+            \begin{minipage}{0.33\textwidth}
+                \begin{figure}
+                    \centering
+                    \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_1_constraints}}
+                    \caption{1 Orthogonal constraint}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.6\textwidth}
+                \begin{block}{1 orthogonal constraint}
+                    \vspace*{.25cm}
+                    \begin{itemize}
+                        \item 1 constraint
+                        \item 2 degrees of freedom
+                    \end{itemize}
+                \end{block}
+                \begin{block}{Application}
+                    \begin{itemize}
+                        \item Plane navigation
+                        \item Wall avoidance
+                        \item Pipe / Rope following
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{2 orthogonal constraint}
+            \begin{minipage}{0.33\textwidth}
+                \begin{figure}
+                    \centering
+                    \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_2_constraints}}
+                    \caption{1 Orthogonal constraint}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.6\textwidth}
+                \begin{block}{2 orthogonal constraint}
+                    \vspace*{.25cm}
+                    \begin{itemize}
+                        \item 2 constraints
+                        \item 1 degree of freedom
+                    \end{itemize}
+                \end{block}
+                \begin{block}{Application}
+                    \begin{itemize}
+                        \item Plane navigation with Yaw / Roll control
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{3 orthogonal constraint}
+            \begin{minipage}{0.33\textwidth}
+                \begin{figure}
+                    \centering
+                    \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_3_constraints}}
+                    \caption{1 Orthogonal constraint}
+                \end{figure}
+            \end{minipage}
+            \hfill
+            \begin{minipage}{0.6\textwidth}
+                \begin{block}{3 orthogonal constraint}
+                    \vspace*{.25cm}
+                    \begin{itemize}
+                        \item 3 constraints
+                        \item 0 degree of freedom
+                    \end{itemize}
+                \end{block}
+                \begin{block}{Application}
+                    \begin{itemize}
+                        \item Align along control basis
+                    \end{itemize}
+                \end{block}
+            \end{minipage}
+        \end{frame}
+
+        \begin{frame}{Summary of orthogonal constraints}
+            \begin{figure}
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_0_constraints}}
+                    \caption{No constraints}
+                    \label{fig:constraints_0}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_1_constraints}}
+                    \caption{1 constraint $(i_0 \bot k_1)$}
+                    \label{fig:constraints_1}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_2_constraints}}
+                    \caption{2 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$}
+                    \label{fig:constraints_2}
+                \end{subfigure}
+                \hfill
+                \begin{subfigure}[t]{0.24\textwidth}
+                    \centering
+                    \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_3_constraints}}
+                    \caption{3 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$, $(j_0 \bot i_1)$}
+                    \label{fig:constraints_3}
+                \end{subfigure}
+                \caption{All combinations of orthogonal constraints in 3 dimensions}
+            \end{figure}
+        \end{frame}
+        
     \section{Conclusion}
 
         \begin{frame}{Conclusion}
@@ -836,210 +1136,9 @@
         \settoggle{bbx:isbn}{false}
         \printbibliography[sorting=nyt]
 
-      \end{frame}
+    \end{frame}
 
-    % \begin{frame}{2D Pipe following - Classical control}
-        %     \begin{minipage}{0.4\textwidth}
-        %         \begin{figure}
-        %             \begin{tikzpicture}
-        %                 \begin{scope}[rotate=35]
-        %                     \def\r{.2};
-        %                     \def\h{4};
-        %                     \draw[fill=gray!60]  (-\h/2,\r) to[out=0,in=60]  (-\h/2,0) to[out=120,in=180] cycle;
-        %                     \draw[fill=gray!30] (-\h/2,\r) to[out=0,in=60] (-\h/2,0) to[out=-120,in=180] (-\h/2,-\r) -- (\h/2,-\r) to[out=180,in=-120] (\h/2,0) to[out=60,in=0] (\h/2,\r) -- cycle;
-        %                     \draw[fill=gray!60]  (\h/2,-\r) to[out=180,in=-120]  (\h/2,0) to[out=-60,in=0] cycle;
-        %                 \end{scope}
-
-        %                 \onslide<2-> {
-        %                     \draw[thick,red,->,>=latex] (0,0) -- +(35:1cm) node[midway,xshift=-.2cm,yshift=.25cm] {$\mathbf{u}$};
-        %                 }
-        %                 \onslide<3-> {
-        %                     \begin{scope}[xshift=-2cm,yshift=.5cm]
-        %                         \coordinate (c2) at (0,0);
-        %                         \path[rotate=-25,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
-        %                         \path[rotate=-25,draw,thick,RoyalBlue] (n2) arc (-90:-30:1.2cm) -- ++(60:2);
-        %                         \draw[rotate=-25,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
-        %                     \end{scope}
-        %                 }
-
-        %                 \onslide<4-> {
-        %                     \begin{scope}[xshift=2cm,yshift=-.5cm]
-        %                         \coordinate (c1) at (0,0);
-        %                         \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
-        %                         \path[rotate=155, draw,thick,RoyalBlue] (n1) arc (90:-25:1.2cm) -- ++(-115:0);
-        %                         \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
-        %                     \end{scope}
-        %                 }
-        %             \end{tikzpicture}
-        %             \caption{Pipe following - Proposed approach}
-        %         \end{figure}
-        %     \end{minipage}
-        %     \hfill
-        %     \begin{minipage}{0.55\textwidth}
-        %         \begin{figure}
-        %             \begin{tikzpicture}[decoration=triangles,rotate=-65]
-        %                 \foreach \n/\a in {n1/90, n2/270} {
-        %                     \coordinate (\n) at (\a:1.5cm);
-        %                 }
-        %                 \path[draw] (n2) arc (-90:90:1.5cm);
-        %                 \path[draw] (n2) arc (270:90:1.5cm);
-
-        %                 \onslide<2-> {
-        %                     \path[draw,thick,RoyalBlue] (n2) arc (-90:90:1.5cm);
-        %                     \path[draw,thick,RoyalBlue] (n2) arc (270:90:1.5cm);
-        %                 }
-
-        %                 \onslide<3-> {
-        %                     \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (-90:90:1.5cm);
-        %                 }
-
-        %                 \onslide<4-> {
-        %                     \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n2) arc (270:90:1.5cm);
-        %                 }
-                        
-        %                 \onslide<2-> {
-        %                     \filldraw[RoyalBlue] (n1) circle (3pt) node[yshift=.3cm,right] {control};
-        %                     \filldraw[red] (n2) circle (3pt) node[yshift=-.3cm,left] {singularity};
-        %                 }
-
-        %                 \onslide<3-> {
-        %                     \draw[thick,ForestGreen,->,>=latex] (0,0) -- (40:1.5) node[midway,below] {$\mathbf{v_1}$};
-        %                 }
-
-        %                 \onslide<4-> {
-        %                     \draw[thick,ForestGreen,->,>=latex] (0,0) -- (210:1.5) node[midway,above] {$\mathbf{v_2}$};
-        %                 }
-
-        %                 \filldraw (0,0) circle (1pt);
-        %             \end{tikzpicture}
-        %             \caption{Representation in $S^1$}
-        %         \end{figure}
-        %     \end{minipage}
-        % \end{frame}
-
-        % \begin{frame}{2D Wall avoidance - Orthogonal control}
-        %     \begin{minipage}{0.4\textwidth}
-        %         \begin{figure}
-        %             \begin{tikzpicture}
-        %                 \begin{scope}[rotate=35]
-        %                     \def\r{.2};
-        %                     \def\h{4};
-        %                     \draw[fill=gray!60]  (-\h/2,\r) to[out=0,in=60]  (-\h/2,0) to[out=120,in=180] cycle;
-        %                     \draw[fill=gray!30] (-\h/2,\r) to[out=0,in=60] (-\h/2,0) to[out=-120,in=180] (-\h/2,-\r) -- (\h/2,-\r) to[out=180,in=-120] (\h/2,0) to[out=60,in=0] (\h/2,\r) -- cycle;
-        %                     \draw[fill=gray!60]  (\h/2,-\r) to[out=180,in=-120]  (\h/2,0) to[out=-60,in=0] cycle;
-        %                 \end{scope}
-
-        %                 \onslide<2-> {
-        %                     \draw[thick,red,->,>=latex] (0,0) -- +(125:1cm) node[midway,xshift=.1cm,yshift=.35cm] {$\mathbf{u}$};
-        %                 }
-
-        %                 \onslide<3-> {
-        %                     \begin{scope}[xshift=-2cm,yshift=.5cm]
-        %                         \coordinate (c2) at (0,0);
-        %                         \path[rotate=-25,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n2) -- cycle;
-        %                         \path[rotate=-25,draw,thick,RoyalBlue] (n2) arc (-90:-30:1.2cm) -- ++(60:2);
-        %                         \draw[rotate=-25,thick,ForestGreen,->,>=latex] (c2) -- +(0:1cm) node[midway,above] {$\mathbf{v_1}$};
-        %                     \end{scope}
-        %                 }
-                        
-        %                 \onslide<4-> {
-        %                     \begin{scope}[xshift=2cm,yshift=-.5cm]
-        %                         \coordinate (c1) at (0,0);
-        %                         \path[rotate=155,thick,draw] (-0.2,-0.25) -- (-0.2,0.25) -- (0.5,0) coordinate (n1) -- cycle;
-        %                         \path[rotate=155, draw,thick,RoyalPurple] (n1) arc (-90:-30:1.2cm) -- ++(60:2);
-        %                         \draw[rotate=155,thick,ForestGreen,->,>=latex] (c1) -- +(0:1cm) node[midway,above] {$\mathbf{v_2}$};
-        %                     \end{scope}
-        %                 }
-        %             \end{tikzpicture}
-        %             \caption{Pipe following - Proposed approach}
-        %         \end{figure}
-        %     \end{minipage}
-        %     \hfill
-        %     \begin{minipage}{0.55\textwidth}
-        %         \begin{figure}
-        %             \begin{tikzpicture}[decoration=triangles,rotate=-35]
-        %                 \foreach \n/\a in {n1/0, n2/90, n3/180, n4/270} {
-        %                     \coordinate (\n) at (\a:1.5cm);
-        %                 }
-        %                 \path[draw] (n1.north) arc (0:90:1.5cm);
-        %                 \path[draw] (n3.north) arc (180:90:1.5cm);
-        %                 \path[draw] (n3.south) arc (180:270:1.5cm);
-        %                 \path[draw] (n1.south) arc (360:270:1.5cm);
-
-        %                 \onslide<2-> {
-        %                     \path[draw,thick,RoyalBlue] (n1.north) arc (0:90:1.5cm);
-        %                     \path[draw,thick,RoyalBlue] (n3.north) arc (180:90:1.5cm);
-        %                     \path[draw,thick,RoyalPurple] (n3.south) arc (180:270:1.5cm);
-        %                     \path[draw,thick,RoyalPurple] (n1.south) arc (360:270:1.5cm);
-        %                 }
-                        
-        %                 \onslide<3-> {
-        %                     \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n1.north) arc (0:90:1.5cm);
-        %                     \path[draw,thick,RoyalBlue,postaction={draw,decorate with=dart,paint=RoyalBlue}] (n3.north) arc (180:90:1.5cm);
-        %                 }
-
-        %                 \onslide<4-> {
-        %                     \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n3.south) arc (180:270:1.5cm);
-        %                     \path[draw,thick,RoyalPurple,postaction={draw,decorate with=dart,paint=RoyalPurple}] (n1.south) arc (360:270:1.5cm);
-        %                 }
-
-        %                 \onslide<2-> {
-        %                     \foreach \n/\c in {n1/red, n2/RoyalBlue, n3/red, n4/RoyalPurple} {
-        %                         \filldraw[\c] (\n) circle (3pt);
-        %                     }
-        %                     \filldraw[RoyalBlue] (n2) circle (3pt) node[yshift=.3cm,right] {control};
-        %                     \filldraw[red] (n1) circle (3pt) node[right,xshift=.1cm] {singularity};
-        %                     \filldraw[red] (n3) circle (3pt) node[left,xshift=-.1cm] {singularity};
-        %                     \filldraw[RoyalPurple] (n4) circle (3pt) node[yshift=-.3cm,left] {control};
-        %                 }
-
-        %                 \onslide<3-> {
-        %                     \draw[thick,ForestGreen,->,>=latex] (0,0) -- (10:1.5) node[midway,below] {$\mathbf{v_1}$};
-        %                 }
-
-        %                 \onslide<4-> {
-        %                     \draw[thick,ForestGreen,->,>=latex] (0,0) -- (190:1.5) node[midway,above] {$\mathbf{v_2}$};
-        %                 }
-
-        %                 \filldraw (0,0) circle (1pt);
-        %             \end{tikzpicture}
-        %             \caption{Representation in $S^1$}
-        %         \end{figure}
-        %     \end{minipage}
-        % \end{frame}
-    
-        % \begin{frame}{Summary of orthogonal constraints}
-        %     \begin{figure}
-        %         \begin{subfigure}[t]{0.24\textwidth}
-        %             \centering
-        %             \href{run:frame_0_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_0_constraints}}
-        %             \caption{No constraints}
-        %             \label{fig:constraints_0}
-        %         \end{subfigure}
-        %         \hfill
-        %         \begin{subfigure}[t]{0.24\textwidth}
-        %             \centering
-        %             \href{run:frame_1_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_1_constraints}}
-        %             \caption{1 constraint $(i_0 \bot k_1)$}
-        %             \label{fig:constraints_1}
-        %         \end{subfigure}
-        %         \hfill
-        %         \begin{subfigure}[t]{0.24\textwidth}
-        %             \centering
-        %             \href{run:frame_2_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_2_constraints}}
-        %             \caption{2 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$}
-        %             \label{fig:constraints_2}
-        %         \end{subfigure}
-        %         \hfill
-        %         \begin{subfigure}[t]{0.24\textwidth}
-        %             \centering
-        %             \href{run:frame_3_constraints.mp4?autostart&loop}{\includegraphics[width=\textwidth,height=\textwidth]{build/imgs/manim/frame_3_constraints}}
-        %             \caption{3 constraints $(i_0 \bot k_1)$, $(j_0 \bot k_1)$, $(j_0 \bot i_1)$}
-        %             \label{fig:constraints_3}
-        %         \end{subfigure}
-        %         \caption{All combinations of orthogonal constraints in 3 dimensions}
-        %     \end{figure}
-        % \end{frame}
+        
 
 
     % \section{Control}
